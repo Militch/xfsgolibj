@@ -78,6 +78,8 @@ public class StdTokenExample {
         public void listenLoopAsync() {
             // chainService.getHead();
 
+            // 获取合约时间
+
         }
     }
     public static void main(String[] args) throws Exception {
