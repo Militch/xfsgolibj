@@ -19,7 +19,7 @@ public class StdTokenExample {
     private static final RPCClient rpcClient = new HTTPRPCClient(Common.API_URL);
     private static final ChainService chainService = new RPCChainService(rpcClient);
 
-    private static final class USDTCoin extends StdTokenContract {
+    static final class USDTCoin extends StdTokenContract {
         // 代币名称
         private static final String NAME = "USD Test";
         // 代币符号
@@ -47,19 +47,19 @@ public class StdTokenExample {
 
     }
 
-    private static final class TokenInternalTransaction {
+    static final class TokenInternalTransaction {
         /**
          * 交易发送地址
          */
-        private final Address from;
+        final Address from;
         /**
          * 交易目标地址
          */
-        private final Address to;
+        final Address to;
         /**
          * 交易额度
          */
-        private final BigInteger value;
+        final BigInteger value;
 
         public TokenInternalTransaction(Address from, Address to, BigInteger value) {
             this.from = from;
@@ -70,11 +70,11 @@ public class StdTokenExample {
     /**
      * 测试模拟同步器
      */
-    private static final class TestSynchronizer {
+    static final class TestSynchronizer {
         // 模拟数据库，记录通证余额。相当于业务的账户表
-        private final Map<Address, BigInteger> balanceMap = new HashMap<>();
+        final Map<Address, BigInteger> balanceMap = new HashMap<>();
         // 模拟数据库，记录通证内部交易。相当于业务交易记录表
-        private final Map<Hash, TokenInternalTransaction>  internal = new HashMap<>();
+        private final Map<Hash, TokenInternalTransaction> internal = new HashMap<>();
         public void listenLoopAsync() {
             // chainService.getHead();
 
