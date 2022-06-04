@@ -40,4 +40,8 @@ public final class Hash {
         Hash target = (Hash) obj;
         return Arrays.equals(this.data, target.data);
     }
+    @Override
+    public int hashCode() {
+        return data==null? 0: Arrays.hashCode(data);
+    }
 }

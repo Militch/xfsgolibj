@@ -11,7 +11,10 @@ public class Address {
         }
         this.data = Arrays.copyOfRange(data, 0, ADDRESS_LEN);
     }
-    public static Address fromString(String text){
+    public static Address fromString(String text) throws Exception {
+        if(text == null || text.length() != 33){
+            throw new Exception("Address is empty or parse err");
+        }
         return new Address(Base58.decode(text));
     }
     public byte[] toBytes(){
@@ -34,5 +37,10 @@ public class Address {
     @Override
     public String toString() {
         return toBase58();
+    }
+
+    @Override
+    public int hashCode() {
+        return data==null? 0: Arrays.hashCode(data);
     }
 }

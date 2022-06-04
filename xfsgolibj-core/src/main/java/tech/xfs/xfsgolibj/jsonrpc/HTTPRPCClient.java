@@ -1,8 +1,9 @@
 package tech.xfs.xfsgolibj.jsonrpc;
 
+import com.google.common.reflect.TypeParameter;
+import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
-import com.google.gson.reflect.TypeToken;
 import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,8 @@ import org.web3j.utils.Strings;
 import tech.xfs.xfsgolibj.core.RPCClient;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 public class HTTPRPCClient implements RPCClient {
@@ -18,7 +21,7 @@ public class HTTPRPCClient implements RPCClient {
     public static final MediaType MEDIA_TYPE_JSON
             = MediaType.get("application/json; charset=utf-8");
     private static final String JSON_RPC_VERSION = "2.0";
-    private static final Gson g = new Gson().newBuilder().create();
+    private static final Gson g = new Gson().newBuilder().serializeNulls().create();
     private final String apiurl;
 
     public HTTPRPCClient(String apiurl){
@@ -70,8 +73,11 @@ public class HTTPRPCClient implements RPCClient {
             throw e;
         }
     }
+    private static <T> Type setModelAndGetCorrespondingList(Class<T> tClass){
+        return new TypeToken<ArrayList<T>>(){}.where(new TypeParameter<T>() { },tClass).getType();
+    }
     @Override
-    public <T, D> List<T> callList(String method, D data) throws Exception {
+    public <T, D> List<T> callList(String method, D data, Class<T> tClass) throws Exception {
         String body = request(method, data);
         if (Strings.isEmpty(body)){
             throw new NullPointerException("body is null");
@@ -81,7 +87,8 @@ public class HTTPRPCClient implements RPCClient {
         if (result == null || result.isJsonNull()){
             return null;
         }
-        return g.fromJson(result, new TypeToken<List<T>>(){}.getType());
+        Type t = setModelAndGetCorrespondingList(tClass);
+        return g.fromJson(result, t);
     }
 
     @Override
