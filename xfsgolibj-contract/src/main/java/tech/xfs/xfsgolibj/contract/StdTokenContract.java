@@ -56,16 +56,28 @@ public class StdTokenContract extends Contract<StdTokenContract.Caller,StdTokenC
             Object result = call(opts, "GetTotalSupply");
             return (BigInteger) result;
         }
+        public BigInteger Allowance(CallOpts opts, Address owner, Address spender) throws Exception {
+            Object result = call(opts, "Allowance", owner, spender);
+            return (BigInteger) result;
+        }
     }
     public static final class Sender extends Contract.Sender {
         public Sender(Contract<?,?> contract, Address address) {
             super(contract, address);
         }
+
         public Hash Transfer(TransactionOpts opts, Address to, BigInteger amount) throws Exception {
             return super.send(opts, "Transfer",to, amount);
         }
+
         public Hash TransferFrom(TransactionOpts opts, Address from, Address to, BigInteger amount) throws Exception {
             return super.send(opts, "TransferFrom", from, to, amount);
+        }
+        public Hash Approve(TransactionOpts opts, Address to, BigInteger amount) throws Exception {
+            return super.send(opts, "Approve", to, amount);
+        }
+        public Hash Burn(TransactionOpts opts, Address address, BigInteger amount) throws Exception {
+            return super.send(opts, "Burn", address, amount);
         }
         public Hash Mint(TransactionOpts opts, Address toAddress, BigInteger amount) throws Exception {
             return super.send(opts, "Mint", toAddress, amount);

@@ -3,7 +3,7 @@ package tech.xfs.xfsgolibj.examples;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.xfs.xfsgolibj.common.*;
-import tech.xfs.xfsgolibj.contract.StdTokenContract;
+import tech.xfs.xfsgolibj.contract.NFTokenContract;
 import tech.xfs.xfsgolibj.core.ChainService;
 import tech.xfs.xfsgolibj.core.Contract;
 import tech.xfs.xfsgolibj.core.RPCClient;
@@ -20,27 +20,22 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class StdTokenExample {
+public class NFTokenExample {
     private static final RPCClient rpcClient = new HTTPRPCClient(Common.API_URL);
     private static final ChainService chainService = new RPCChainService(rpcClient);
 
-    static final class USDTCoin extends StdTokenContract {
-        // 代币名称
-        private static final String NAME = "USDTest";
-        // 代币符号
-        private static final String SYMBOL = "USDT";
-        // 代币小数精度
-        public static final int DECIMALS = 18;
-        // 初始发行量
-        private final BigInteger initSupply = BigInteger.valueOf(1000L)
-                .multiply(BigInteger.TEN.pow(DECIMALS));
+    static final class MyCollection extends NFTokenContract {
+        // 合集名称
+        private static final String NAME = "MyCollection";
+        // 合集符号
+        private static final String SYMBOL = "MC";
 
-        public USDTCoin(RPCClient client) {
+        public MyCollection(RPCClient client) {
             super(client);
         }
 
         public DeployResult deploy(TransactionOpts opts) throws Exception {
-            return deploy(opts, NAME, SYMBOL, DECIMALS, initSupply);
+            return deploy(opts, NAME, SYMBOL);
         }
     }
 
@@ -85,9 +80,9 @@ public class StdTokenExample {
         // 合约事件订阅器, 合约地址-订阅列表
         private final Map<Address, List<EventLogObserver>> eventObservers = new HashMap<>();
         private final Lock lock = new ReentrantLock();
-        private final StdTokenContract contract;
+        private final MyCollection contract;
 
-        TestSynchronizer(USDTCoin contract) {
+        TestSynchronizer(MyCollection contract) {
             this.contract = contract;
         }
 
@@ -283,37 +278,37 @@ public class StdTokenExample {
         }
     }
 
-    private static final Logger logger = LoggerFactory.getLogger(StdTokenExample.class);
+    private static final Logger logger = LoggerFactory.getLogger(NFTokenExample.class);
 
     private static void usage() {
         System.out.println("Usage: [command] [options] \n" +
-                "newAccount                                    创建账户\n" +
-                "importAccount <key>                           导入账户私钥\n" +
-                "accounts                                      本地账户列表\n" +
-                "transfer <from> <to> <n>                      使用 from 地址向 to 地址转移 n 个代币\n" +
-                "transferFrom <spender> <from> <to> <n>        使用 spender 地址 从 from 地址向 to 地址转移 n 个代币（需要授额）\n" +
-                "approve <from> <spender> <n>                  使用 from 地址授予消费者（spender）可转移额度\n" +
-                "burn <address> <n>                            销毁指定地址(address) 拥有的 n 个代币\n" +
-                "allowance <owner> <spender>                   查询代币持有者(owner)授予消费者(spender)可转移额度\n" +
-                "balanceOf <address>                           查询指定地址的余额\n" +
-                "mint <address> <n>                            给指定的地址增发 n 个代币\n" +
-                "totalSupply                                   查询当前合约总供给量\n" +
-                "name                                          查询当前合约名称\n" +
-                "decimals                                      查询当前合约小数精度\n" +
-                "symbol                                        查询当前合约符号\n" +
-                "contract                                      查询当前合约地址\n" +
-                "q|quit                                        退出\n" +
-                "help|h|?                                      帮助"
+                "newAccount                                             创建账户\n" +
+                "importAccount <key>                                    导入账户私钥\n" +
+                "accounts                                               本地账户列表\n" +
+                "tokens                                                 藏品列表\n" +
+                "transferFrom <operator> <from> <to> <tokenId>          使用 operator 地址从 from 地址向 to 地址转移指定的藏品（需要授额）\n" +
+                "approve <from> <to> <tokenId>                          使用 from 地址授予 to 地址指定藏品ID的转移权限\n" +
+                "setApproveForAll <from> <operator> <true|false>        使用 from 地址给 operator 地址设置所有藏品转移权限\n" +
+                "getApproved <tokenId>                                  查询拥有藏品转移权限的地址\n" +
+                "isApprovedForAll <owner> <spender>                     查询<spender>地址是否拥有<owner>地址的所有藏品转移权限\n" +
+                "balanceOf <address>                                    查询指定地址的拥有的藏品数量\n" +
+                "ownerOf <tokenId>                                      查询藏品的持有人\n" +
+                "mint <address>                                         给指定的地址铸造藏品\n" +
+                "name                                                   查询当前合约名称\n" +
+                "symbol                                                 查询当前合约符号\n" +
+                "contract                                               查询当前合约地址\n" +
+                "q|quit                                                 退出\n" +
+                "help|h|?                                               帮助"
         );
     }
 
     public static void main(String[] args) throws Exception {
         // 初始化账户管理器-模拟后台
-        StdTokenAccountMgr accountMgr = new StdTokenAccountMgr();
-        // 实例化 USDTCoin 合约对象
-        USDTCoin usdtCoin = new USDTCoin(rpcClient);
+        NFTokenAccountMgr accountMgr = new NFTokenAccountMgr();
+        // 实例化合约对象
+        MyCollection myCollection = new MyCollection(rpcClient);
         // 构造测试同步器
-        TestSynchronizer synchronizer = new TestSynchronizer(usdtCoin);
+        TestSynchronizer synchronizer = new TestSynchronizer(myCollection);
         // 启动异步轮询同步
         Timer timer = synchronizer.listenLoopAsync();
         // 初始化合约创建者私钥
@@ -329,7 +324,7 @@ public class StdTokenExample {
         deployOpts.setSigner(creator);
         logger.debug("正在部署合约，创建者地址: {}", creator.getAddress());
         // 部署代币合约，要带入部署参数
-        Contract.DeployResult result = usdtCoin.deploy(deployOpts);
+        Contract.DeployResult result = myCollection.deploy(deployOpts);
         // 获取合约地址
         Address contractAddress = result.getContractAddress();
         // 获取交易HASH
@@ -337,29 +332,31 @@ public class StdTokenExample {
         logger.debug("合约 {} 部署消息已发送，等待上链打包以及交易 {} 确认, 当前确认次数: {}",
                 contractAddress.toBase58(), result.getTransactionHash(), Common.DEFAULT_CONFIRM_COUNT);
 
-        StdTokenContract.Sender sender = usdtCoin.getSender(contractAddress);
-        StdTokenContract.Caller caller = usdtCoin.getCaller(contractAddress);
+        NFTokenContract.Sender sender = myCollection.getSender(contractAddress);
+        NFTokenContract.Caller caller = myCollection.getCaller(contractAddress);
         // 创建一个合约事件订阅器-订阅当前合约的转移事件
-        Hash transferEventHash = usdtCoin.getEventHash(StdTokenContract.StdTokenTransferEvent.EVENT_NAME);
+        Hash transferEventHash = myCollection.getEventHash(NFTokenContract.NFTokenTransferEvent.EVENT_NAME);
         EventLogObserver eventLogObserver = synchronizer.subscribeContractEvent(contractAddress, transferEventHash);
         // 设置事件回调
         eventLogObserver.setEventObserverListener((event, data) -> {
-            // 如果合约发生了转移事件，那么就应该去更新余额
-            StdTokenContract.StdTokenTransferEvent stdTokenTransferEvent =
-                    (StdTokenContract.StdTokenTransferEvent) event;
+            // 如果合约发生了转移事件，那么就应该去更新藏品列表
+            NFTokenContract.NFTokenTransferEvent stdTokenTransferEvent =
+                    (NFTokenContract.NFTokenTransferEvent) event;
             // 这是转移事件的发送地址
             Address fromAddress = stdTokenTransferEvent.getFrom(data);
             // 这是转移事件的目标地址
             Address toAddress = stdTokenTransferEvent.getTo(data);
-            // 获取转移事件的数量
-            BigInteger value = stdTokenTransferEvent.getValue(data);
-            logger.debug("接受转移事件，发送地址：{}，目标地址：{}, 转移数量：{}", fromAddress, toAddress, value);
+            // 获取转移的藏品ID
+            BigInteger tokenId = stdTokenTransferEvent.getTokenId(data);
+            logger.debug("接受转移事件，发送地址：{}，目标地址：{}, 藏品ID：{}", fromAddress, toAddress, tokenId);
             BigInteger fromAddressBalance = caller.BalanceOf(null, fromAddress);
             BigInteger toAddressBalance = caller.BalanceOf(null, toAddress);
-            // 更新发送地址的余额
+            // 更新发送地址的藏品数量
             accountMgr.updateAccountBalance(fromAddress, fromAddressBalance);
-            // 更新目标地址的余额
+            // 更新目标地址的藏品数量
             accountMgr.updateAccountBalance(toAddress, toAddressBalance);
+            // 更新藏品的持有人
+            accountMgr.updateTokenIdOwner(tokenId, toAddress);
         });
         System.out.printf("正在部署合约：%s, 合约创建者：%s%n", contractAddress, creator.getAddress());
         System.out.printf("交易哈希：%s, 当前交易确认次数: %d%n", transactionHash, Common.DEFAULT_CONFIRM_COUNT);
@@ -395,91 +392,82 @@ public class StdTokenExample {
                     case "help":
                         usage();
                         break;
-                    case"allowance":
-                        // 查询授权额度
+                    case"isApprovedForAll":
+                        // 查询藏品的授权地址
                         if(options.length < 2){
                             usage();
                             break;
                         }
-                        Address allowanceOwnerAddress = Address.fromString(options[0]);
-                        Address allowanceSpenderAddress = Address.fromString(options[1]);
-                        BigInteger allowanceValue = caller.Allowance(null,
-                                allowanceOwnerAddress, allowanceSpenderAddress);
-                        // 同样展示的时候要除以精度
-                        BigDecimal allowanceValueN = allowanceValue==null?BigDecimal.ZERO:
-                                new BigDecimal(allowanceValue).divide(BigDecimal.TEN.pow(USDTCoin.DECIMALS),
-                                        6, RoundingMode.DOWN);
-                        System.out.printf("%s%n", allowanceValueN);
+                        Address approvedOwner = Address.fromString(options[0]);
+                        Address approvedSpender = Address.fromString(options[1]);
+                        Boolean approvedForAll = caller.IsApprovedForAll(null, approvedOwner, approvedSpender);
+                        System.out.printf("%s%n", approvedForAll);
                         break;
-                    case "burn":
-                        // 销毁代币
-                        if(options.length < 2){
+                    case"getApproved":
+                        // 查询藏品的授权地址
+                        BigInteger approvedTokenId = new BigInteger(options[0]);
+                        Address approved = caller.GetApproved(null, approvedTokenId);
+                        System.out.printf("%s%n", approved);
+                        break;
+                    case "setApproveForAll":
+                        // 设置某个藏品的转移权限
+                        if(options.length < 3){
                             usage();
                             break;
                         }
-                        Address burnAddress = Address.fromString(options[0]);
-                        BigDecimal burnValue = new BigDecimal(options[1]);
-                        BigInteger realBurnValue = burnValue.multiply(
-                                        BigDecimal.TEN.pow(USDTCoin.DECIMALS))
-                                .toBigInteger();
-                        TransactionOpts burnOpts = new TransactionOpts();
-                        // 这里同样需要创建者权限，否则不成功
-                        burnOpts.setFrom(creator.getAddress());
-                        burnOpts.setSigner(accountMgr);
-                        System.out.printf("正在销毁地址 (%s) 代币数量: %s%n", burnAddress, realBurnValue);
-                        Hash burnTransactionHash = sender.Burn(burnOpts, burnAddress, realBurnValue);
-                        // 订阅交易确认消息
-                        TransactionObserver burnTransferObserver = synchronizer.subscribeTransactionConfirm(
-                                burnTransactionHash, Common.DEFAULT_CONFIRM_COUNT);
+                        Address approveAllFromAddress = Address.fromString(options[0]);
+                        Address approveAllToAddress = Address.fromString(options[1]);
+                        Boolean allApproved = Boolean.valueOf(options[2]);
+                        TransactionOpts approveAllOpts = new TransactionOpts();
+                        approveAllOpts.setFrom(approveAllFromAddress);
+                        approveAllOpts.setSigner(accountMgr);
+                        System.out.printf("正在使用(%s)地址，设置 (%s) 地址对于所有藏品拥有转移权限: value=%s%n",
+                                approveAllFromAddress, approveAllToAddress, allApproved);
+                        Hash approveAllTransactionHash = sender.SetApprovalForAll(approveAllOpts,
+                                approveAllToAddress, allApproved);
+                        //订阅交易确认消息
+                        TransactionObserver approveAllTransferObserver = synchronizer.subscribeTransactionConfirm(
+                                approveAllTransactionHash, Common.DEFAULT_CONFIRM_COUNT);
                         // 等待交易确认
-                        burnTransferObserver.waitForNotify();
+                        approveAllTransferObserver.waitForNotify();
                         // 获取回执结果，判定是否执行成功
-                        TransactionReceipt burnReceipt = chainService.getReceiptByHash(burnTransactionHash);
-                        Integer burnReceiptStatus = burnReceipt.getStatus();
-                        if (burnReceiptStatus.equals(1)){
-                            System.out.println("销毁成功！！！");
+                        TransactionReceipt approveAllReceipt = chainService.getReceiptByHash(approveAllTransactionHash);
+                        Integer approveAllReceiptStatus = approveAllReceipt.getStatus();
+                        if (approveAllReceiptStatus.equals(1)){
+                            System.out.println("授权成功！！！");
                         }else{
-                            System.out.println("销毁失败！！！");
+                            System.out.println("授权失败！！！");
                         }
                         break;
                     case "approve":
-                        // 授额
+                        // 设置某个藏品的转移权限
                         if(options.length < 3){
                             usage();
                             break;
                         }
                         Address approveFromAddress = Address.fromString(options[0]);
-                        Address approveSpenderAddress = Address.fromString(options[1]);
-                        BigDecimal approveValue = new BigDecimal(options[2]);
-                        BigInteger realApproveValue = approveValue.multiply(
-                                        BigDecimal.TEN.pow(USDTCoin.DECIMALS))
-                                .toBigInteger();
+                        Address approveToAddress = Address.fromString(options[1]);
+                        BigInteger approveOpenId = new BigInteger(options[2]);
                         TransactionOpts approveOpts = new TransactionOpts();
                         approveOpts.setFrom(approveFromAddress);
                         approveOpts.setSigner(accountMgr);
-                        System.out.printf("正在使用地址 (%s) 授予地址 (%s) 可转移代币数量: %s%n",
-                                approveFromAddress, approveSpenderAddress, realApproveValue);
+                        System.out.printf("正在使用(%s)地址，授予给 (%s) 地址藏品转移权限: ID=%s%n",
+                                approveFromAddress, approveToAddress, approveOpenId);
                         Hash approveTransactionHash = sender.Approve(approveOpts,
-                                approveSpenderAddress, realApproveValue);
-                        // 订阅交易确认消息
+                                approveToAddress, approveOpenId);
+                         //订阅交易确认消息
                         TransactionObserver approveTransferObserver = synchronizer.subscribeTransactionConfirm(
-                                approveTransactionHash, Common.DEFAULT_CONFIRM_COUNT);
+                               approveTransactionHash, Common.DEFAULT_CONFIRM_COUNT);
                         // 等待交易确认
                         approveTransferObserver.waitForNotify();
-
                         // 获取回执结果，判定是否执行成功
-                        TransactionReceipt approveReceipt = chainService.getReceiptByHash(approveTransactionHash);
+                       TransactionReceipt approveReceipt = chainService.getReceiptByHash(approveTransactionHash);
                         Integer approveReceiptStatus = approveReceipt.getStatus();
                         if (approveReceiptStatus.equals(1)){
                             System.out.println("授权成功！！！");
                         }else{
                             System.out.println("授权失败！！！");
                         }
-                        break;
-                    case "decimals":
-                        // 查询小数进度
-                        Integer decimals = caller.GetDecimals(null);
-                        System.out.printf("%d%n", decimals);
                         break;
                     case "name":
                         // 查询合约名称
@@ -495,32 +483,20 @@ public class StdTokenExample {
                         // 查询合约地址
                         System.out.printf("%s%n", contractAddress);
                         break;
-                    case "totalSupply":
-                        // 查询总供给量
-                        BigInteger totalSupply = caller.GetTotalSupply(null);
-                        // 同样展示的时候要除以精度
-                        BigDecimal totalSupplyN = totalSupply==null?BigDecimal.ZERO:
-                                new BigDecimal(totalSupply).divide(BigDecimal.TEN.pow(USDTCoin.DECIMALS),
-                                        6, RoundingMode.DOWN);
-                        System.out.printf("%s%n", totalSupplyN);
-                        break;
                     case "mint":
-                        // 给某个地址增发
-                        if(options.length < 2){
+                        // 铸造藏品
+                        if(options.length < 1){
                             usage();
                             break;
                         }
                         Address mintAddress = Address.fromString(options[0]);
-                        BigDecimal mintValue = new BigDecimal(options[1]);
-                        BigInteger realMintValue = mintValue.multiply(
-                                        BigDecimal.TEN.pow(USDTCoin.DECIMALS))
-                                .toBigInteger();
                         // 这里要用合约创建地址执行，不然没有权限
                         TransactionOpts mintOpts = new TransactionOpts();
                         mintOpts.setFrom(creator.getAddress());
                         mintOpts.setSigner(accountMgr);
-                        System.out.printf("正在给地址 (%s) 铸造增发，数量: %s%n", mintAddress, realMintValue);
-                        Hash mintTransactionHash = sender.Mint(mintOpts, mintAddress, realMintValue);
+                        Hash mintTransactionHash = sender.Mint(mintOpts, mintAddress);
+                        System.out.printf("正在给地址 (%s) 铸造藏品, 等待交易确认: %s%n",
+                                mintAddress, mintTransactionHash);
                         // 订阅交易确认消息
                         TransactionObserver mintTransferObserver = synchronizer.subscribeTransactionConfirm(
                                 mintTransactionHash, Common.DEFAULT_CONFIRM_COUNT);
@@ -530,9 +506,9 @@ public class StdTokenExample {
                         TransactionReceipt mintReceipt = chainService.getReceiptByHash(mintTransactionHash);
                         Integer mintReceiptStatus = mintReceipt.getStatus();
                         if (mintReceiptStatus.equals(1)){
-                            System.out.println("铸造增发成功！！！");
+                            System.out.println("铸造藏品成功！！！");
                         }else{
-                            System.out.println("铸造增发失败！！！");
+                            System.out.println("铸造藏品失败！！！");
                         }
                         break;
                     case "newAccount":
@@ -556,11 +532,16 @@ public class StdTokenExample {
                         }
                         Address balanceOfAddress = Address.fromString(options[0]);
                         BigInteger gotBalance = caller.BalanceOf(null, balanceOfAddress);
-                        // 真实的余额是要除以小数精度的，这里保留6位小数
-                        BigDecimal gotBalanceN = gotBalance==null?BigDecimal.ZERO:
-                                new BigDecimal(gotBalance).divide(BigDecimal.TEN.pow(USDTCoin.DECIMALS),
-                                        6, RoundingMode.DOWN);
-                        System.out.printf("%s%n", gotBalanceN);
+                        System.out.printf("%s%n", gotBalance);
+                        break;
+                    case "ownerOf":
+                        if (options.length < 1) {
+                            usage();
+                            break;
+                        }
+                        BigInteger tokenId = new BigInteger(options[0]);
+                        Address owner = caller.OwnerOf(null, tokenId);
+                        System.out.printf("%s%n", owner);
                         break;
                     case "accounts":
                         // 输出账户列表
@@ -569,51 +550,32 @@ public class StdTokenExample {
                             System.out.println("无数据");
                             break;
                         }
-                        System.out.printf("%-31s %-17s", "账户地址", "余额");
+                        System.out.printf("%-31s %-17s", "账户地址", "藏品数量");
                         System.out.println();
                         for (Address address : accountMap.keySet()) {
                             String addressString = address.toBase58();
                             System.out.printf("%-33s ", addressString);
-                            // 获取账户余额
+                            // 获取账户藏品数量
                             BigInteger balance = accountMgr.getBalance(address);
-                            // 真实的余额是要除以小数精度的，这里保留6位小数
-                            BigDecimal balanceN = balance==null?BigDecimal.ZERO:
-                                    new BigDecimal(balance).divide(BigDecimal.TEN.pow(USDTCoin.DECIMALS),
-                                            6, RoundingMode.DOWN);
-                            System.out.printf("%-18s ", balanceN);
+                            System.out.printf("%-18s ", balance==null?0:balance);
                             System.out.println();
                         }
                         break;
-                    case "transfer":
-                        if (options.length < 3) {
-                            usage();
+                    case "tokens":
+                        // 输出藏品列表
+                        Map<BigInteger, Address> owners = accountMgr.getOwners();
+                        if (owners.isEmpty()) {
+                            System.out.println("无数据");
                             break;
                         }
-                        Address from = Address.fromString(options[0]);
-                        Address to = Address.fromString(options[1]);
-                        BigDecimal transferValue = new BigDecimal(options[2]);
-                        TransactionOpts opts = new TransactionOpts();
-                        opts.setFrom(from);
-                        opts.setSigner(accountMgr);
-                        System.out.printf("正在从地址 (%s) 向地址 (%s) 转移代币，数量: %s%n", from, to, transferValue);
-                        // 这里要乘以小数精度，因为用户输入的是带小数的并且给用户展示的也是除以了小数精度的
-                        BigInteger realTransferValueValue = transferValue.multiply(
-                                BigDecimal.TEN.pow(USDTCoin.DECIMALS))
-                                .toBigInteger();
-                        Hash txHash = sender.Transfer(opts, to, realTransferValueValue);
-                        System.out.printf("发送转移消息成功，交易消息（%s）等待上链确认，当前确认次数: %d%n", txHash, Common.DEFAULT_CONFIRM_COUNT);
-                        // 订阅交易确认消息
-                        TransactionObserver transferObserver = synchronizer.subscribeTransactionConfirm(
-                                txHash, Common.DEFAULT_CONFIRM_COUNT);
-                        // 等待交易确认
-                        transferObserver.waitForNotify();
-                        // 获取回执结果，判定是否执行成功
-                        TransactionReceipt transactionReceipt = chainService.getReceiptByHash(txHash);
-                        Integer transactionReceiptStatus = transactionReceipt.getStatus();
-                        if (transactionReceiptStatus.equals(1)){
-                            System.out.println("转移成功！！！");
-                        }else{
-                            System.out.println("转移失败！！！");
+                        System.out.printf("%-18s %-31s", "藏品ID", "持有人");
+                        System.out.println();
+                        for (BigInteger ownerTokenId : owners.keySet()) {
+                            System.out.printf("%-18s ", ownerTokenId);
+                            // 获取账户余额
+                            Address ownerAddress = accountMgr.getOwner(ownerTokenId);
+                            System.out.printf("%-33s ", ownerAddress);
+                            System.out.println();
                         }
                         break;
                     case "transferFrom":
@@ -621,22 +583,19 @@ public class StdTokenExample {
                             usage();
                             break;
                         }
-                        Address transferSpenderAddress = Address.fromString(options[0]);
+                        Address transferOperatorAddress = Address.fromString(options[0]);
                         Address transferFromAddress = Address.fromString(options[1]);
                         Address transferToAddress = Address.fromString(options[2]);
-                        BigDecimal transferFromValue = new BigDecimal(options[3]);
+                        BigInteger transferFromTokenId = new BigInteger(options[3]);
                         TransactionOpts transferFromOpts = new TransactionOpts();
-                        transferFromOpts.setFrom(transferSpenderAddress);
+                        transferFromOpts.setFrom(transferOperatorAddress);
                         transferFromOpts.setSigner(accountMgr);
-                        System.out.printf("正在使用 %s 地址从 (%s) 地址向 (%s) 地址转移代币，数量: %s%n",
-                                transferSpenderAddress, transferFromAddress, transferToAddress, transferFromValue);
-                        // 这里要乘以小数精度，因为用户输入的是带小数的并且给用户展示的也是除以了小数精度的
-                        BigInteger realTransferFromValueValue = transferFromValue.multiply(
-                                        BigDecimal.TEN.pow(USDTCoin.DECIMALS))
-                                .toBigInteger();
+                        System.out.printf("正在使用 %s 地址从 (%s) 地址向 (%s) 地址转移藏品: ID=%s%n",
+                                transferOperatorAddress, transferFromAddress,
+                                transferToAddress, transferFromTokenId);
                         Hash transferFromHash = sender.TransferFrom(
-                                transferFromOpts, transferFromAddress , transferToAddress,
-                                realTransferFromValueValue);
+                                transferFromOpts, transferFromAddress ,
+                                transferToAddress, transferFromTokenId );
                         System.out.printf("发送转移消息成功，交易消息（%s）等待上链确认，当前确认次数: %d%n",
                                 transferFromHash, Common.DEFAULT_CONFIRM_COUNT);
                         // 订阅交易确认消息

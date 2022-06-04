@@ -1,6 +1,5 @@
 package tech.xfs.xfsgolibj.examples;
 
-import org.checkerframework.checker.units.qual.A;
 import org.web3j.crypto.ECKeyPair;
 import tech.xfs.xfsgolibj.common.Address;
 import tech.xfs.xfsgolibj.common.Hash;
@@ -19,12 +18,30 @@ import java.util.Map;
 /**
  * 账户管理器，这里模拟业务数据库
  */
-public class AccountMgr implements Signer {
+public class NFTokenAccountMgr implements Signer {
     // 用以记录存储账户密钥
     private final Map<Address, Account> accountMap = new HashMap<>();
-    // 用以记录存储账户余额
+    // 用以记录账户的所拥有藏品数量
     private final Map<Address, BigInteger> balanceMap = new HashMap<>();
-
+    // 用以记录合集藏品的持有人
+    private final Map<BigInteger, Address> owners = new HashMap<>();
+    public Map<Address, Account> getAccountMap() {
+        return accountMap;
+    }
+    public Map<BigInteger, Address> getOwners() {
+        return owners;
+    }
+    /**
+     * 获取账户的藏品数量
+     * @param address 地址
+     * @return 藏品数量
+     */
+    public BigInteger getBalance(Address address){
+        return balanceMap.get(address);
+    }
+    public Address getOwner(BigInteger tokenId){
+        return owners.get(tokenId);
+    }
     /**
      * 随机生成账户
      */
@@ -37,21 +54,22 @@ public class AccountMgr implements Signer {
         return address;
     }
 
-    public Map<Address, Account> getAccountMap() {
-        return accountMap;
-    }
-
-    public BigInteger getBalance(Address address){
-        return balanceMap.get(address);
-    }
-
     /**
-     * 更新账户余额
+     * 更新账户的藏品数量
      * @param address 账户地址
-     * @param value 账户余额
+     * @param value 账户藏品数量
      */
     public synchronized void updateAccountBalance(Address address, BigInteger value){
         balanceMap.put(address, value);
+    }
+
+    /**
+     * 更新藏品持有人
+     * @param tokenId 账户地址
+     * @param owner 账户余额
+     */
+    public synchronized void updateTokenIdOwner(BigInteger tokenId, Address owner){
+        owners.put(tokenId, owner);
     }
 
     /**

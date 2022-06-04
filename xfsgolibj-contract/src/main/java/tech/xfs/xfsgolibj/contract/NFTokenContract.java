@@ -49,9 +49,18 @@ public class NFTokenContract extends Contract<NFTokenContract.Caller, NFTokenCon
             Object result = call(opts, "OwnerOf", tokenId);
             return (Address) result;
         }
-        public BigInteger GetBalance(CallOpts opts, Address address) throws Exception {
-            Object result =call(opts, "GetBalance", address);
+        public BigInteger BalanceOf(CallOpts opts, Address address) throws Exception {
+            Object result =call(opts, "BalanceOf", address);
             return (BigInteger) result;
+        }
+
+        public Address GetApproved(CallOpts opts, BigInteger tokenId) throws Exception {
+            Object result = call(opts, "GetApproved", tokenId);
+            return (Address) result;
+        }
+        public Boolean IsApprovedForAll(CallOpts opts, Address owner, Address spender) throws Exception {
+            Object result = call(opts, "IsApprovedForAll", owner, spender);
+            return (Boolean) result;
         }
     }
 
@@ -60,10 +69,16 @@ public class NFTokenContract extends Contract<NFTokenContract.Caller, NFTokenCon
             super(contract, address);
         }
         public Hash Mint(TransactionOpts opts, Address address) throws Exception {
-            return super.send(opts, "Mite", address);
+            return send(opts, "Mint", address);
         }
-        public Hash TransferFrom(TransactionOpts opts, Address from, Address to, BigInteger tokenId) throws Exception {
-            return super.send(opts, "TransferFrom", from, to, tokenId);
+        public Hash Approve(TransactionOpts opts, Address to, BigInteger tokenId) throws Exception {
+            return send(opts, "Approve", to, tokenId);
+        }
+        public Hash SetApprovalForAll(TransactionOpts opts, Address operator, Boolean value) throws Exception {
+            return send(opts, "SetApprovalForAll", operator, value);
+        }
+        public Hash TransferFrom(TransactionOpts opts, Address from , Address to, BigInteger tokenId) throws Exception {
+            return send(opts, "TransferFrom", from, to, tokenId);
         }
     }
     public static final class NFTokenApprovalEvent extends Event{
@@ -72,14 +87,14 @@ public class NFTokenContract extends Contract<NFTokenContract.Caller, NFTokenCon
             super(contract, EVENT_NAME);
         }
 
-        public String getOwner(){
-            return "";
+        public Address getOwner(byte[] value) throws Exception {
+            return (Address) parseEventValue("owner", value);
         }
-        public String getApproved(){
-            return "";
+        public Address getApproved(byte[] value) throws Exception {
+            return (Address) parseEventValue("approved", value);
         }
-        public BigInteger getTokenId(){
-            return BigInteger.ZERO;
+        public BigInteger getTokenId(byte[] value) throws Exception {
+            return (BigInteger) parseEventValue("tokenId", value);
         }
     }
 
@@ -88,15 +103,14 @@ public class NFTokenContract extends Contract<NFTokenContract.Caller, NFTokenCon
         public NFTokenTransferEvent(Contract<?, ?> contract) {
             super(contract, EVENT_NAME);
         }
-        public String getFrom(){
-            return "";
+        public Address getFrom(byte[] value) throws Exception {
+            return (Address) parseEventValue("from", value);
         }
-
-        public String getTo(){
-            return "";
+        public Address getTo(byte[] value) throws Exception {
+            return (Address) parseEventValue("to", value);
         }
-        public BigInteger getTokenId(){
-            return BigInteger.ONE;
+        public BigInteger getTokenId(byte[] value) throws Exception {
+            return (BigInteger) parseEventValue("tokenId", value);
         }
     }
 
@@ -110,14 +124,14 @@ public class NFTokenContract extends Contract<NFTokenContract.Caller, NFTokenCon
             super(contract, EVENT_NAME);
         }
 
-        public String getOwner(){
-           return "";
+        public Address getOwner(byte[] value) throws Exception {
+            return (Address) parseEventValue("owner", value);
         }
-        public String getOperator(){
-            return "";
+        public Address getOperator(byte[] value) throws Exception {
+            return (Address) parseEventValue("approved", value);
         }
-        public boolean getApproved(){
-            return false;
+        public Boolean getApproved(byte[] value) throws Exception {
+            return (Boolean) parseEventValue("approved", value);
         }
     }
 }
