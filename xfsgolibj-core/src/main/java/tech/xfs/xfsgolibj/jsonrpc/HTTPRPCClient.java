@@ -25,6 +25,7 @@ public class HTTPRPCClient implements RPCClient {
         bytesAdapter = new BytesAdapter();
     }
     private final static Gson g = new Gson().newBuilder()
+            .serializeNulls()
             .registerTypeAdapter(Hash.class, hashAdapter)
             .registerTypeAdapter(Address.class, addressAdapter)
             .registerTypeAdapter(byte[].class, bytesAdapter)
