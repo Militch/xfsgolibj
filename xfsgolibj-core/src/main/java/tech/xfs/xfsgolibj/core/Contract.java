@@ -229,7 +229,7 @@ public abstract class Contract<T extends Contract.Caller, D extends Contract.Sen
         request.setFrom(opts.from);
         request.setTo(contractAddress);
         request.setData(data);
-        byte[] result = service.call(request);
+        byte[] result = service.vmCall(request);
         // vm call
         return abiExport.unpackResult(method, result);
     }
