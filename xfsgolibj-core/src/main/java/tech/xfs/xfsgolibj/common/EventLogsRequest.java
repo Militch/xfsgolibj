@@ -3,8 +3,8 @@ package tech.xfs.xfsgolibj.common;
 public class EventLogsRequest {
     private Long fromBlock;
     private Long toBlock;
-    private String address;
-    private String eventHash;
+    private Address address;
+    private Hash eventHash;
 
     public Long getFromBlock() {
         return fromBlock;
@@ -22,19 +22,19 @@ public class EventLogsRequest {
         this.toBlock = toBlock;
     }
 
-    public String getAddress() {
+    public Address getAddress() {
         return address;
     }
 
-    public void setAddress(String address) {
+    public void setAddress(Address address) {
         this.address = address;
     }
 
-    public String getEventHash() {
+    public Hash getEventHash() {
         return eventHash;
     }
 
-    public void setEventHash(String eventHash) {
+    public void setEventHash(Hash eventHash) {
         this.eventHash = eventHash;
     }
 }

@@ -5,7 +5,9 @@ import tech.xfs.xfsgolibj.common.*;
 import tech.xfs.xfsgolibj.core.ChainService;
 import tech.xfs.xfsgolibj.core.RPCClient;
 import tech.xfs.xfsgolibj.utils.Bytes;
+import tech.xfs.xfsgolibj.utils.Strings;
 
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
@@ -34,14 +36,14 @@ public class RPCChainService implements ChainService {
         }
     }
     @Override
-    public byte[] call(CallRequest request) throws Exception {
+    public byte[] vmCall(CallRequest request) throws Exception {
         if (request == null){
             throw new IllegalArgumentException("request is null");
         }
         String[] params = new String[]{
-                request.getStateRoot()==null?null:request.getStateRoot().toHexString(),
-                request.getFrom()==null?null:request.getFrom().toBase58(),
-                request.getTo()==null?null:request.getTo().toBase58(),
+                Strings.valueOf(request.getStateRoot()),
+                Strings.valueOf(request.getFrom()),
+                Strings.valueOf(request.getTo()),
                 Bytes.toHexString(request.getData()),
         };
         String hex = client.call("VM.Call",params,String.class);
@@ -52,8 +54,9 @@ public class RPCChainService implements ChainService {
         if (address == null){
             throw new IllegalArgumentException("address is null");
         }
-        return client.call("TxPool.GetAddrTxNonce",
-                new String[]{address.toBase58()}, Long.class);
+        return client.call("TxPool.GetAddrTxNonce", new String[]{
+                Strings.valueOf(address)
+        }, Long.class);
     }
     public BlockHeader getHead() throws Exception {
         return client.call("Chain.GetHead", null,BlockHeader.class);
@@ -64,7 +67,9 @@ public class RPCChainService implements ChainService {
         if (blockHash == null){
             throw new IllegalArgumentException("block hash is empty");
         }
-        return client.callList("Chain.GetTxsByBlockNum", null, Transaction.class);
+        return client.callList("Chain.GetTxsByBlockHash", new String[]{
+                Strings.valueOf(blockHash),
+        }, Transaction.class);
     }
 
     @Override
@@ -73,7 +78,7 @@ public class RPCChainService implements ChainService {
             throw new IllegalArgumentException("transaction_hash is empty");
         }
         return client.call("Chain.GetTransaction", new String[]{
-                transactionHash.toHexString()
+                Strings.valueOf(transactionHash)
         }, Transaction.class);
     }
 
@@ -83,7 +88,7 @@ public class RPCChainService implements ChainService {
             throw new IllegalArgumentException("transaction_hash is empty");
         }
         return client.call("Chain.GetReceiptByHash", new String[]{
-                transactionHash.toHexString()
+                Strings.valueOf(transactionHash),
         }, TransactionReceipt.class);
     }
 
@@ -93,19 +98,40 @@ public class RPCChainService implements ChainService {
             throw new IllegalArgumentException("transaction_hash is empty");
         }
         return client.callList("Chain.GetLogs", new String[]{
-                logsRequest.getFromBlock()==null?null:
-                        String.valueOf(logsRequest.getFromBlock()),
-                logsRequest.getToBlock()==null?null:
-                        String.valueOf(logsRequest.getToBlock()),
-                logsRequest.getAddress()==null?null:
-                        logsRequest.getAddress(),
-                logsRequest.getEventHash()==null?null:
-                        logsRequest.getEventHash()
+                Strings.valueOf(logsRequest.getFromBlock()),
+                Strings.valueOf(logsRequest.getToBlock()),
+                Strings.valueOf(logsRequest.getAddress()),
+                Strings.valueOf(logsRequest.getEventHash()),
         }, EventLog.class);
     }
 
-    public void getBlockByHash(){}
-    public void getTransaction(){}
-    public void getAccount(){}
-    public void getBalance(){}
+    @Override
+    public Account getAccount(Address address) throws Exception {
+        if (address == null){
+            throw new IllegalArgumentException("address is null");
+        }
+        return client.call("State.GetAccount", new String[]{
+                Strings.valueOf(address),
+        }, Account.class);
+    }
+
+    @Override
+    public BigInteger getBalance(Address address) throws Exception {
+        return null;
+    }
+
+    @Override
+    public byte[] getStorageAt(Hash address) throws Exception {
+        return new byte[0];
+    }
+
+    @Override
+    public List<Transaction> getPendingTransactions() throws Exception {
+        return null;
+    }
+
+    @Override
+    public List<Transaction> getQueueTransactions() throws Exception {
+        return null;
+    }
 }

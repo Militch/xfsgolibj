@@ -3,6 +3,7 @@ package tech.xfs.xfsgolibj.core;
 
 import tech.xfs.xfsgolibj.common.*;
 
+import java.math.BigInteger;
 import java.util.List;
 
 public interface ChainService {
@@ -24,7 +25,7 @@ public interface ChainService {
      * @param request 请求参数
      * @return 执行结果
      */
-    byte[] call(CallRequest request) throws Exception;
+    byte[] vmCall(CallRequest request) throws Exception;
 
     /**
      * 获取最新区块头
@@ -54,4 +55,9 @@ public interface ChainService {
      * @return 日志列表
      */
     List<EventLog> getLogs(EventLogsRequest logsRequest) throws Exception;
+    Account getAccount(Address address) throws Exception;
+    BigInteger getBalance(Address address) throws Exception;
+    byte[] getStorageAt(Hash address) throws Exception;
+    List<Transaction> getPendingTransactions() throws Exception;
+    List<Transaction> getQueueTransactions() throws Exception;
 }
