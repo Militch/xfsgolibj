@@ -1,16 +1,14 @@
 package tech.xfs.xfsgolibj.service;
 
 import com.google.gson.Gson;
-import tech.xfs.xfsgolibj.common.CallRequest;
-import tech.xfs.xfsgolibj.common.Address;
-import tech.xfs.xfsgolibj.common.Hash;
-import tech.xfs.xfsgolibj.common.Transaction;
+import tech.xfs.xfsgolibj.common.*;
 import tech.xfs.xfsgolibj.core.ChainService;
 import tech.xfs.xfsgolibj.core.RPCClient;
 import tech.xfs.xfsgolibj.utils.Bytes;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.List;
 import java.util.Map;
 
 public class RPCChainService implements ChainService {
@@ -20,7 +18,7 @@ public class RPCChainService implements ChainService {
         this.client = client;
     }
     @Override
-    public void sendRawTransaction(Transaction transaction) throws Exception {
+    public void sendRawTransaction(RawTransaction transaction) throws Exception {
         if (transaction == null){
             throw new IllegalArgumentException("transaction is null");
         }
@@ -57,9 +55,55 @@ public class RPCChainService implements ChainService {
         return client.call("TxPool.GetAddrTxNonce",
                 new String[]{address.toBase58()}, Long.class);
     }
-    public void getHead(){}
-    public void getLogs(){}
-    public void getBlockByNumber(){}
+    public BlockHeader getHead() throws Exception {
+        return client.call("Chain.GetHead", null,BlockHeader.class);
+    }
+
+    @Override
+    public List<Transaction> getTransactionsByBlockHash(Hash blockHash) throws Exception {
+        if (blockHash == null){
+            throw new IllegalArgumentException("block hash is empty");
+        }
+        return client.callList("Chain.GetTxsByBlockNum", null, Transaction.class);
+    }
+
+    @Override
+    public Transaction getTransactionsByHash(Hash transactionHash) throws Exception {
+        if (transactionHash == null){
+            throw new IllegalArgumentException("transaction_hash is empty");
+        }
+        return client.call("Chain.GetTransaction", new String[]{
+                transactionHash.toHexString()
+        }, Transaction.class);
+    }
+
+    @Override
+    public TransactionReceipt getReceiptByHash(Hash transactionHash) throws Exception {
+        if (transactionHash == null){
+            throw new IllegalArgumentException("transaction_hash is empty");
+        }
+        return client.call("Chain.GetReceiptByHash", new String[]{
+                transactionHash.toHexString()
+        }, TransactionReceipt.class);
+    }
+
+    @Override
+    public List<EventLog> getLogs(EventLogsRequest logsRequest) throws Exception {
+        if (logsRequest == null){
+            throw new IllegalArgumentException("transaction_hash is empty");
+        }
+        return client.callList("Chain.GetLogs", new String[]{
+                logsRequest.getFromBlock()==null?null:
+                        String.valueOf(logsRequest.getFromBlock()),
+                logsRequest.getToBlock()==null?null:
+                        String.valueOf(logsRequest.getToBlock()),
+                logsRequest.getAddress()==null?null:
+                        logsRequest.getAddress(),
+                logsRequest.getEventHash()==null?null:
+                        logsRequest.getEventHash()
+        }, EventLog.class);
+    }
+
     public void getBlockByHash(){}
     public void getTransaction(){}
     public void getAccount(){}

@@ -1,6 +1,7 @@
 package tech.xfs.xfsgolibj.core;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 import org.web3j.utils.Numeric;
 import tech.xfs.xfsgolibj.common.Address;
 import tech.xfs.xfsgolibj.common.Tuple2;
@@ -15,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ABIExport {
     private static int calcOutLens(int len){
@@ -49,74 +51,7 @@ public class ABIExport {
         }
 
         public byte[] pack(Object obj) throws Exception {
-            switch (type){
-                case "CTypeString":
-                    if (!(obj instanceof String)){
-                        throw new Exception("type check err");
-                    }
-                    int len = ((String) obj).length();
-                    byte[] stringLenBuf = Binary.LittleEndian.fromInt64(len);
-                    byte[] stringBuf = ((String) obj).getBytes(Charset.defaultCharset());
-                    int datalen = stringLenBuf.length + stringBuf.length;
-                    stringBuf = Bytes.concat(stringLenBuf, stringBuf);
-                    int outLens = calcOutLens(datalen);
-                    return Arrays.copyOf(stringBuf, outLens);
-                case "CTypeUint8":
-                    if (!(obj instanceof Integer)){
-                        throw new Exception("type check err");
-                    }
-                    if (checkoutNumberOverflow((int)obj, 8)){
-                        throw new Exception("type number overflow");
-                    }
-                    return Arrays.copyOf(new byte[]{(byte) (int) obj}, calcOutLens(1));
-                case "CTypeUint16":
-                    if (!(obj instanceof Integer)){
-                        throw new Exception("type check err");
-                    }
-                    if (checkoutNumberOverflow((int)obj, 16)){
-                        throw new Exception("type number overflow");
-                    }
-                    byte[] uint16Buf = Binary.LittleEndian.fromInt16((int) obj);
-                    return Arrays.copyOf(uint16Buf, calcOutLens(uint16Buf.length));
-                case "CTypeUint32":
-                    if (!(obj instanceof Integer)){
-                        throw new Exception("type check err");
-                    }
-                    if (checkoutNumberOverflow((int)obj, 32)){
-                        throw new Exception("type number overflow");
-                    }
-                    byte[] uint32Buf = Binary.LittleEndian.fromInt32((int) obj);
-                    return Arrays.copyOf(uint32Buf, calcOutLens(uint32Buf.length));
-                case "CTypeUint64":
-                    if (!(obj instanceof Long)){
-                        throw new Exception("type check err");
-                    }
-                    if (checkoutNumberOverflow((long)obj, 32)){
-                        throw new Exception("type number overflow");
-                    }
-                    byte[] uint64Buf = Binary.LittleEndian.fromInt64((long) obj);
-                    return Arrays.copyOf(uint64Buf, calcOutLens(uint64Buf.length));
-                case "CTypeUint256":
-                    if (!(obj instanceof BigInteger)){
-                        throw new Exception("type check err");
-                    }
-                    byte[] uint256Buf = Numeric.toBytesPadded((BigInteger) obj,32);
-                    return Arrays.copyOf(uint256Buf, calcOutLens(uint256Buf.length));
-                case "CTypeAddress":
-                    if (!(obj instanceof Address)){
-                        throw new Exception("type check err");
-                    }
-                    byte[] addressBuf = ((Address) obj).toBytes();
-                    return Arrays.copyOf(addressBuf, calcOutLens(addressBuf.length));
-                case "CTypeBool":
-                    if (!(obj instanceof Boolean)){
-                        throw new Exception("type check err");
-                    }
-                    boolean bool = (boolean) obj;
-                    byte boolByte = bool ? (byte) 1 : (byte) 0;
-                    return Arrays.copyOf(new byte[]{boolByte}, calcOutLens(1));
-            }
-            return null;
+            return ABITypes.pack(type, obj);
         }
     }
     public static final class EventABIObj {
@@ -144,6 +79,16 @@ public class ABIExport {
             return args;
         }
 
+        public Object parseEventValue(String argName, byte[] bytes) throws Exception {
+            if (argName == null){
+                throw new IllegalArgumentException("argName is null");
+            }
+            ArgObj argObj = args.stream().filter((item)-> item.name.equals(argName)).findFirst().orElse(null);
+            if (argObj == null){
+                throw new IllegalArgumentException("argObj is null");
+            }
+            return ABITypes.unpack(argObj.type, bytes);
+        }
         public void setArgs(List<ArgObj> args) {
             this.args = args;
         }
@@ -152,6 +97,7 @@ public class ABIExport {
     public static final class MethodABIObj {
         private String name;
         private int argc;
+        @SerializedName("return_type")
         private String returnType;
         private List<ArgObj> args;
 
@@ -274,47 +220,10 @@ public class ABIExport {
             return null;
         }
         Tuple2<String,MethodABIObj> methodABIObjPair = findMethod(method);
-        MethodABIObj methodABIObj = methodABIObjPair.getSecond();
-        switch (methodABIObj.returnType) {
-            case "CTypeString":
-                return new String(data, StandardCharsets.UTF_8);
-            case "CTypeUint8":
-                if (data.length != 1){
-                    throw new Exception("result type check err");
-                }
-                return (int) data[0];
-            case "CTypeUint16":
-                if (data.length != 2){
-                    throw new Exception("result type check err");
-                }
-                return Binary.LittleEndian.toInt16(data);
-            case "CTypeUint32":
-                if (data.length != 4){
-                    throw new Exception("result type check err");
-                }
-                return Binary.LittleEndian.toInt32(data);
-            case "CTypeUint64":
-                if (data.length != 8){
-                    throw new Exception("result type check err");
-                }
-                return Binary.LittleEndian.toInt64(data);
-            case "CTypeAddress":
-                if (data.length != 25){
-                    throw new Exception("result type check err");
-                }
-                return new Address(data);
-            case "CTypeUint256":
-                if (data.length != 32){
-                    throw new Exception("result type check err");
-                }
-                return new BigInteger(data);
-            case "CTypeBool":
-                if (data.length != 1){
-                    throw new Exception("result type check err");
-                }
-                byte boolByte = data[0];
-                return boolByte == 1;
+        if (methodABIObjPair == null){
+            throw new Exception("Not found Method");
         }
-        return null;
+        MethodABIObj methodABIObj = methodABIObjPair.getSecond();
+        return ABITypes.unpack(methodABIObj.returnType, data);
      }
 }

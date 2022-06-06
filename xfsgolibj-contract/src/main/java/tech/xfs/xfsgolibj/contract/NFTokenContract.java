@@ -15,7 +15,12 @@ public class NFTokenContract extends Contract<NFTokenContract.Caller, NFTokenCon
     public static final String BIN = "0xd02302";
 
     public NFTokenContract(RPCClient client) {
-        super(client, BINs.fromHex(BIN), ABIExport.fromJson(ABI));
+        super(client, BINs.fromHex(BIN), ABIExport.fromJson(ABI), new Class<?>[]{
+                NFTokenTransferEvent.class,
+                NFTokenApprovalEvent.class,
+                NFTokenApprovalForAllEvent.class
+        });
+
     }
     @Override
     public Caller getCaller(Address address) {
@@ -27,36 +32,35 @@ public class NFTokenContract extends Contract<NFTokenContract.Caller, NFTokenCon
         return new Sender(this, address);
     }
 
-    @Override
-    public Event[] events() {
-        return new Event[]{
-                new NFTokenApprovalEvent(this),
-                new NFTokenTransferEvent(this),
-                new NFTokenApprovalForAllEvent(this)
-        };
-    }
-
-
     public static final class Caller extends Contract.Caller {
         public Caller(Contract<?,?> contract, Address address) {
             super(contract, address);
         }
 
         public String GetName(CallOpts opts) throws Exception {
-            Object result = super.call(opts, "GetName");
+            Object result = call(opts, "GetName");
             return (String) result;
         }
         public String GetSymbol(CallOpts opts) throws Exception {
-            Object result = super.call(opts, "GetSymbol");
+            Object result = call(opts, "GetSymbol");
             return (String) result;
         }
         public Address OwnerOf(CallOpts opts, BigInteger tokenId) throws Exception {
-            Object result = super.call(opts, "OwnerOf", tokenId);
+            Object result = call(opts, "OwnerOf", tokenId);
             return (Address) result;
         }
-        public BigInteger GetBalance(CallOpts opts, Address address) throws Exception {
-            Object result =super.call(opts, "GetBalance", address);
+        public BigInteger BalanceOf(CallOpts opts, Address address) throws Exception {
+            Object result =call(opts, "BalanceOf", address);
             return (BigInteger) result;
+        }
+
+        public Address GetApproved(CallOpts opts, BigInteger tokenId) throws Exception {
+            Object result = call(opts, "GetApproved", tokenId);
+            return (Address) result;
+        }
+        public Boolean IsApprovedForAll(CallOpts opts, Address owner, Address spender) throws Exception {
+            Object result = call(opts, "IsApprovedForAll", owner, spender);
+            return (Boolean) result;
         }
     }
 
@@ -65,51 +69,48 @@ public class NFTokenContract extends Contract<NFTokenContract.Caller, NFTokenCon
             super(contract, address);
         }
         public Hash Mint(TransactionOpts opts, Address address) throws Exception {
-            return super.send(opts, "Mite", address);
+            return send(opts, "Mint", address);
         }
-        public Hash TransferFrom(TransactionOpts opts, Address from, Address to, BigInteger tokenId) throws Exception {
-            return super.send(opts, "TransferFrom", from, to, tokenId);
+        public Hash Approve(TransactionOpts opts, Address to, BigInteger tokenId) throws Exception {
+            return send(opts, "Approve", to, tokenId);
+        }
+        public Hash SetApprovalForAll(TransactionOpts opts, Address operator, Boolean value) throws Exception {
+            return send(opts, "SetApprovalForAll", operator, value);
+        }
+        public Hash TransferFrom(TransactionOpts opts, Address from , Address to, BigInteger tokenId) throws Exception {
+            return send(opts, "TransferFrom", from, to, tokenId);
         }
     }
     public static final class NFTokenApprovalEvent extends Event{
+        public static final String EVENT_NAME = NFTokenApprovalEvent.class.getSimpleName();
         public NFTokenApprovalEvent(Contract<?, ?> contract) {
-            super(contract, NFTokenApprovalEvent.class.getName());
+            super(contract, EVENT_NAME);
         }
 
-        @Override
-        protected void parse(byte[] data) {
-
+        public Address getOwner(byte[] value) throws Exception {
+            return (Address) parseEventValue("owner", value);
         }
-
-        public String getOwner(){
-            return "";
+        public Address getApproved(byte[] value) throws Exception {
+            return (Address) parseEventValue("approved", value);
         }
-        public String getApproved(){
-            return "";
-        }
-        public BigInteger getTokenId(){
-            return BigInteger.ZERO;
+        public BigInteger getTokenId(byte[] value) throws Exception {
+            return (BigInteger) parseEventValue("tokenId", value);
         }
     }
 
     public static final class NFTokenTransferEvent extends Event {
+        public static final String EVENT_NAME = NFTokenTransferEvent.class.getSimpleName();
         public NFTokenTransferEvent(Contract<?, ?> contract) {
-            super(contract, NFTokenTransferEvent.class.getName());
+            super(contract, EVENT_NAME);
         }
-
-        @Override
-        protected void parse(byte[] data) {
-
+        public Address getFrom(byte[] value) throws Exception {
+            return (Address) parseEventValue("from", value);
         }
-        public String getFrom(){
-            return "";
+        public Address getTo(byte[] value) throws Exception {
+            return (Address) parseEventValue("to", value);
         }
-
-        public String getTo(){
-            return "";
-        }
-        public BigInteger getTokenId(){
-            return BigInteger.ONE;
+        public BigInteger getTokenId(byte[] value) throws Exception {
+            return (BigInteger) parseEventValue("tokenId", value);
         }
     }
 
@@ -118,22 +119,19 @@ public class NFTokenContract extends Contract<NFTokenContract.Caller, NFTokenCon
     }
 
     public static final class NFTokenApprovalForAllEvent extends Event {
+        public static final String EVENT_NAME = NFTokenApprovalForAllEvent.class.getSimpleName();
         public NFTokenApprovalForAllEvent(Contract<?, ?> contract) {
-            super(contract, NFTokenApprovalForAllEvent.class.getName());
+            super(contract, EVENT_NAME);
         }
 
-        @Override
-        protected void parse(byte[] data) {
-
+        public Address getOwner(byte[] value) throws Exception {
+            return (Address) parseEventValue("owner", value);
         }
-        public String getOwner(){
-           return "";
+        public Address getOperator(byte[] value) throws Exception {
+            return (Address) parseEventValue("approved", value);
         }
-        public String getOperator(){
-            return "";
-        }
-        public boolean getApproved(){
-            return false;
+        public Boolean getApproved(byte[] value) throws Exception {
+            return (Boolean) parseEventValue("approved", value);
         }
     }
 }

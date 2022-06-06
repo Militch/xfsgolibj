@@ -1,5 +1,5 @@
 package tech.xfs.xfsgolibj.common;
 
 public interface Signer {
-    Transaction sign(Address from, Transaction tx) throws Exception;
+    RawTransaction sign(Address from, RawTransaction tx) throws Exception;
 }

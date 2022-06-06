@@ -16,7 +16,10 @@ public class StdTokenContract extends Contract<StdTokenContract.Caller,StdTokenC
     public static final String BIN = "0xd02301";
 
     public StdTokenContract(RPCClient client) {
-        super(client, fromHex(BIN), ABIExport.fromJson(ABI));
+        super(client, fromHex(BIN), ABIExport.fromJson(ABI), new Class<?>[]{
+                StdTokenTransferEvent.class,
+                StdTokenApprovalEvent.class
+        });
     }
     @Override
     public Caller getCaller(Address address) {
@@ -28,38 +31,33 @@ public class StdTokenContract extends Contract<StdTokenContract.Caller,StdTokenC
         return new Sender(this, address);
     }
 
-    @Override
-    public Event[] events() {
-        return new Event[]{
-                new StdTokenTransferEvent(this),
-                new StdTokenApprovalEvent(this)
-        };
-    }
-
-
     public static final class Caller extends Contract.Caller {
         public Caller(Contract<?,?> contract, Address address) {
             super(contract, address);
         }
 
         public String GetName(CallOpts opts) throws Exception {
-            Object result = super.call(opts, "GetName");
+            Object result = call(opts, "GetName");
             return (String) result;
         }
         public String GetSymbol(CallOpts opts) throws Exception {
-            Object result = super.call(opts, "GetSymbol");
+            Object result = call(opts, "GetSymbol");
             return (String) result;
         }
         public Integer GetDecimals(CallOpts opts) throws Exception {
-            Object result = super.call(opts, "GetDecimals");
+            Object result = call(opts, "GetDecimals");
             return (Integer) result;
         }
         public BigInteger BalanceOf(CallOpts opts, Address address) throws Exception {
-            Object result = super.call(opts, "BalanceOf", address);
+            Object result = call(opts, "BalanceOf", address);
             return (BigInteger) result;
         }
         public BigInteger GetTotalSupply(CallOpts opts) throws Exception {
-            Object result = super.call(opts, "GetTotalSupply");
+            Object result = call(opts, "GetTotalSupply");
+            return (BigInteger) result;
+        }
+        public BigInteger Allowance(CallOpts opts, Address owner, Address spender) throws Exception {
+            Object result = call(opts, "Allowance", owner, spender);
             return (BigInteger) result;
         }
     }
@@ -67,52 +65,54 @@ public class StdTokenContract extends Contract<StdTokenContract.Caller,StdTokenC
         public Sender(Contract<?,?> contract, Address address) {
             super(contract, address);
         }
+
         public Hash Transfer(TransactionOpts opts, Address to, BigInteger amount) throws Exception {
             return super.send(opts, "Transfer",to, amount);
         }
+
         public Hash TransferFrom(TransactionOpts opts, Address from, Address to, BigInteger amount) throws Exception {
             return super.send(opts, "TransferFrom", from, to, amount);
+        }
+        public Hash Approve(TransactionOpts opts, Address to, BigInteger amount) throws Exception {
+            return super.send(opts, "Approve", to, amount);
+        }
+        public Hash Burn(TransactionOpts opts, Address address, BigInteger amount) throws Exception {
+            return super.send(opts, "Burn", address, amount);
         }
         public Hash Mint(TransactionOpts opts, Address toAddress, BigInteger amount) throws Exception {
             return super.send(opts, "Mint", toAddress, amount);
         }
     }
     public static final class StdTokenTransferEvent extends Event{
+        public static final String EVENT_NAME = StdTokenTransferEvent.class.getSimpleName();
         public StdTokenTransferEvent(Contract<?, ?> contract) {
-            super(contract, StdTokenTransferEvent.class.getName());
+            super(contract, EVENT_NAME);
         }
 
-        @Override
-        protected void parse(byte[] data) {
-
+        public Address getFrom(byte[] value) throws Exception {
+            return (Address) parseEventValue("from", value);
         }
-        public String getFrom(){
-            return "";
+        public Address getTo(byte[] value) throws Exception {
+            return (Address) parseEventValue("to", value);
         }
-        public String getTo(){
-            return "";
-        }
-        public BigInteger getValue(){
-            return BigInteger.ONE;
+        public BigInteger getValue(byte[] value) throws Exception {
+            return (BigInteger) parseEventValue("value", value);
         }
     }
     public static final class StdTokenApprovalEvent extends Event{
+        public static final String EVENT_NAME = StdTokenApprovalEvent.class.getSimpleName();
         public StdTokenApprovalEvent(Contract<?, ?> contract) {
-            super(contract, StdTokenApprovalEvent.class.getName());
+            super(contract, EVENT_NAME);
         }
 
-        @Override
-        protected void parse(byte[] data) {
-
+        public Address getOwner(byte[] value) throws Exception {
+            return (Address) parseEventValue("owner", value);
         }
-        public String getOwner(){
-            return "";
+        public Address getSpender(byte[] value) throws Exception {
+            return (Address) parseEventValue("spender", value);
         }
-        public String getSpender(){
-            return "";
-        }
-        public BigInteger getValue(){
-            return BigInteger.ZERO;
+        public BigInteger getValue(byte[] value) throws Exception {
+            return (BigInteger) parseEventValue("value", value);
         }
     }
 

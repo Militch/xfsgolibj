@@ -129,8 +129,6 @@ public class MyKeys {
         if (dataHash == null){
             throw new IllegalArgumentException("dataHash is null");
         }
-        String address = getAddressB58String(privateKey);
-        logger.debug("Sign transaction from: {}", address);
         ECKeyPair ecKeyPair = ECKeyPair.create(privateKey);
         Sign.SignatureData signatureData = Sign.signMessage(dataHash, ecKeyPair, false);
         byte[] r = signatureData.getR();
@@ -142,7 +140,6 @@ public class MyKeys {
         System.arraycopy(s, 0,retval,32, 32);
         System.arraycopy(v, 0,retval,64, 1);
         String signatureHex = Bytes.toHexString(retval);
-        logger.debug("signature hex: {}", signatureHex);
         return retval;
     }
 }
