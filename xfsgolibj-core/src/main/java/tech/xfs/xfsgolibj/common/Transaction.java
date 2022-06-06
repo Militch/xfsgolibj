@@ -3,34 +3,35 @@ package tech.xfs.xfsgolibj.common;
 import com.google.gson.annotations.SerializedName;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 public class Transaction {
     @SerializedName("hash")
-    private String hash;
+    private Hash hash;
     @SerializedName("version")
     private Integer version;
     @SerializedName("to")
-    private String to;
+    private Address to;
     @SerializedName("from")
-    private String from;
+    private Address from;
     @SerializedName("gas_price")
-    private BigDecimal gasPrice;
+    private BigInteger gasPrice;
     @SerializedName("gas_limit")
-    private BigDecimal gasLimit;
+    private BigInteger gasLimit;
     @SerializedName("nonce")
     private Long nonce;
     @SerializedName("value")
-    private BigDecimal value;
+    private BigInteger value;
     @SerializedName("data")
-    private String data;
+    private byte[] data;
     @SerializedName("signature")
-    private String signature;
+    private byte[] signature;
 
-    public String getHash() {
+    public Hash getHash() {
         return hash;
     }
 
-    public void setHash(String hash) {
+    public void setHash(Hash hash) {
         this.hash = hash;
     }
 
@@ -42,35 +43,35 @@ public class Transaction {
         this.version = version;
     }
 
-    public String getTo() {
+    public Address getTo() {
         return to;
     }
 
-    public void setTo(String to) {
+    public void setTo(Address to) {
         this.to = to;
     }
 
-    public String getFrom() {
+    public Address getFrom() {
         return from;
     }
 
-    public void setFrom(String from) {
+    public void setFrom(Address from) {
         this.from = from;
     }
 
-    public BigDecimal getGasPrice() {
+    public BigInteger getGasPrice() {
         return gasPrice;
     }
 
-    public void setGasPrice(BigDecimal gasPrice) {
+    public void setGasPrice(BigInteger gasPrice) {
         this.gasPrice = gasPrice;
     }
 
-    public BigDecimal getGasLimit() {
+    public BigInteger getGasLimit() {
         return gasLimit;
     }
 
-    public void setGasLimit(BigDecimal gasLimit) {
+    public void setGasLimit(BigInteger gasLimit) {
         this.gasLimit = gasLimit;
     }
 
@@ -82,27 +83,27 @@ public class Transaction {
         this.nonce = nonce;
     }
 
-    public BigDecimal getValue() {
+    public BigInteger getValue() {
         return value;
     }
 
-    public void setValue(BigDecimal value) {
+    public void setValue(BigInteger value) {
         this.value = value;
     }
 
-    public String getData() {
+    public byte[] getData() {
         return data;
     }
 
-    public void setData(String data) {
+    public void setData(byte[] data) {
         this.data = data;
     }
 
-    public String getSignature() {
+    public byte[] getSignature() {
         return signature;
     }
 
-    public void setSignature(String signature) {
+    public void setSignature(byte[] signature) {
         this.signature = signature;
     }
 }

@@ -20,7 +20,7 @@ public class RPCChainService implements ChainService {
         this.client = client;
     }
     @Override
-    public void sendRawTransaction(RawTransaction transaction) throws Exception {
+    public Hash sendRawTransaction(RawTransaction transaction) throws Exception {
         if (transaction == null){
             throw new IllegalArgumentException("transaction is null");
         }
@@ -28,12 +28,8 @@ public class RPCChainService implements ChainService {
         String jsonString = g.toJson(map);
         Base64.Encoder encoder = Base64.getEncoder();
         String rawEncoded = encoder.encodeToString(jsonString.getBytes(StandardCharsets.UTF_8));
-        String data = client.call("TxPool.SendRawTransaction",
-                new String[]{rawEncoded}, String.class);
-        Hash transactionHash = Hash.fromHex(data);
-        if (!transactionHash.equals(transaction.getHash())){
-            throw new Exception(String.format("hash not match: got: %s, want: %s",transactionHash, transaction.getHash().toHexString()));
-        }
+        return client.call("TxPool.SendRawTransaction",
+                new String[]{rawEncoded}, Hash.class);
     }
     @Override
     public byte[] vmCall(CallRequest request) throws Exception {
@@ -73,7 +69,7 @@ public class RPCChainService implements ChainService {
     }
 
     @Override
-    public Transaction getTransactionsByHash(Hash transactionHash) throws Exception {
+    public Transaction getTransactionByHash(Hash transactionHash) throws Exception {
         if (transactionHash == null){
             throw new IllegalArgumentException("transaction_hash is empty");
         }
@@ -117,21 +113,33 @@ public class RPCChainService implements ChainService {
 
     @Override
     public BigInteger getBalance(Address address) throws Exception {
-        return null;
+        if (address == null){
+            throw new IllegalArgumentException("address is null");
+        }
+        return client.call("State.GetBalance", new String[]{
+                String.valueOf(address),
+        },BigInteger.class);
     }
 
     @Override
-    public byte[] getStorageAt(Hash address) throws Exception {
-        return new byte[0];
+    public byte[] getStorageAt(StorageAtRequest request) throws Exception {
+        if (request == null){
+            throw new IllegalArgumentException("request is null");
+        }
+        return client.call("State.GetStorageAt", new String[]{
+                Strings.valueOf(request.getStateRoot()),
+                Strings.valueOf(request.getAddress()),
+                Strings.valueOf(request.getKey()),
+        }, byte[].class);
     }
 
     @Override
     public List<Transaction> getPendingTransactions() throws Exception {
-        return null;
+        return client.callList("TxPool.GetPending", null, Transaction.class);
     }
 
     @Override
     public List<Transaction> getQueueTransactions() throws Exception {
-        return null;
+        return client.callList("TxPool.GetQueue", null, Transaction.class);
     }
 }

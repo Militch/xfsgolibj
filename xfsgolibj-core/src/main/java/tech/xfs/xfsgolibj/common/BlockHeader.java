@@ -2,23 +2,25 @@ package tech.xfs.xfsgolibj.common;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.math.BigInteger;
+
 public class BlockHeader {
     @SerializedName("height")
     private Long height;
     @SerializedName("version")
     private Integer version;
     @SerializedName("hash_prev_block")
-    private String hashPrevBlock;
+    private Hash hashPrevBlock;
     @SerializedName("timestamp")
     private Long timestamp;
     @SerializedName("coinbase")
-    private String coinbase;
+    private Address coinbase;
     @SerializedName("state_root")
-    private String stateRoot;
+    private Hash stateRoot;
     @SerializedName("transactions_root")
-    private String transactionsRoot;
+    private Hash transactionsRoot;
     @SerializedName("receipts_root")
-    private String receiptsRoot;
+    private Hash receiptsRoot;
     @SerializedName("gas_limit")
     private Long gasLimit;
     @SerializedName("gas_used")
@@ -28,9 +30,9 @@ public class BlockHeader {
     @SerializedName("nonce")
     private Long nonce;
     @SerializedName("extranonce")
-    private String extraNonce;
+    private BigInteger extraNonce;
     @SerializedName("hash")
-    private String hash;
+    private Hash hash;
 
     public Long getHeight() {
         return height;
@@ -48,11 +50,11 @@ public class BlockHeader {
         this.version = version;
     }
 
-    public String getHashPrevBlock() {
+    public Hash getHashPrevBlock() {
         return hashPrevBlock;
     }
 
-    public void setHashPrevBlock(String hashPrevBlock) {
+    public void setHashPrevBlock(Hash hashPrevBlock) {
         this.hashPrevBlock = hashPrevBlock;
     }
 
@@ -64,35 +66,35 @@ public class BlockHeader {
         this.timestamp = timestamp;
     }
 
-    public String getCoinbase() {
+    public Address getCoinbase() {
         return coinbase;
     }
 
-    public void setCoinbase(String coinbase) {
+    public void setCoinbase(Address coinbase) {
         this.coinbase = coinbase;
     }
 
-    public String getStateRoot() {
+    public Hash getStateRoot() {
         return stateRoot;
     }
 
-    public void setStateRoot(String stateRoot) {
+    public void setStateRoot(Hash stateRoot) {
         this.stateRoot = stateRoot;
     }
 
-    public String getTransactionsRoot() {
+    public Hash getTransactionsRoot() {
         return transactionsRoot;
     }
 
-    public void setTransactionsRoot(String transactionsRoot) {
+    public void setTransactionsRoot(Hash transactionsRoot) {
         this.transactionsRoot = transactionsRoot;
     }
 
-    public String getReceiptsRoot() {
+    public Hash getReceiptsRoot() {
         return receiptsRoot;
     }
 
-    public void setReceiptsRoot(String receiptsRoot) {
+    public void setReceiptsRoot(Hash receiptsRoot) {
         this.receiptsRoot = receiptsRoot;
     }
 
@@ -128,19 +130,19 @@ public class BlockHeader {
         this.nonce = nonce;
     }
 
-    public String getExtraNonce() {
+    public BigInteger getExtraNonce() {
         return extraNonce;
     }
 
-    public void setExtraNonce(String extraNonce) {
+    public void setExtraNonce(BigInteger extraNonce) {
         this.extraNonce = extraNonce;
     }
 
-    public String getHash() {
+    public Hash getHash() {
         return hash;
     }
 
-    public void setHash(String hash) {
+    public void setHash(Hash hash) {
         this.hash = hash;
     }
 

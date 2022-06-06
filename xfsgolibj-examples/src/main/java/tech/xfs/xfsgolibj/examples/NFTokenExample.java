@@ -9,11 +9,8 @@ import tech.xfs.xfsgolibj.core.Contract;
 import tech.xfs.xfsgolibj.core.RPCClient;
 import tech.xfs.xfsgolibj.jsonrpc.HTTPRPCClient;
 import tech.xfs.xfsgolibj.service.RPCChainService;
-import tech.xfs.xfsgolibj.utils.Bytes;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.RoundingMode;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -67,7 +64,7 @@ public class NFTokenExample {
         // 最后一次同步的区块高度
         private Long lastSyncBlockHeight;
         // 最后一次同步的区块hash
-        private String lastSyncBlockHash;
+        private Hash lastSyncBlockHash;
         private static final Logger logger = LoggerFactory.getLogger(TestSynchronizer.class);
         // 两个线程池用于处理不同的业务
         // 这个线程池用于处理交易
@@ -142,17 +139,15 @@ public class NFTokenExample {
                 for (EventLog log : logs) {
                     try {
                         // 事件HASH
-                        String eventHashString = log.getEventHash();
-                        Address contractAddress = Address.fromString(log.getAddress());
+                        Hash eventHash = log.getEventHash();
                         // 这是发生事件的合约地址
                         // 解析事件
-                        Hash eventHash = Hash.fromHex(eventHashString);
                         Contract.Event event = contract.getEvent(eventHash);
                         if (event == null) {
                             continue;
                         }
 
-                        List<EventLogObserver> observers = eventObservers.get(contractAddress);
+                        List<EventLogObserver> observers = eventObservers.get(log.getAddress());
                         if (observers == null) {
                             continue;
                         }
@@ -161,8 +156,7 @@ public class NFTokenExample {
                                 continue;
                             }
                             if (observer.getEventHash().equals(eventHash)) {
-                                byte[] data = Bytes.hexToBytes(log.getEventValue());
-                                observer.notifyASync(event, data);
+                                observer.notifyASync(event, log.getEventValue());
                             }
                         }
                     } catch (Exception e) {
@@ -250,7 +244,7 @@ public class NFTokenExample {
                 // 这里会不断的去轮询消息检查区块是否改变
                 BlockHeader blockHeader = chainService.getHead();
                 Long height = blockHeader.getHeight();
-                String hash = blockHeader.getHash();
+                Hash hash = blockHeader.getHash();
                 // 这里会比较上一次同步的区块高度和区块hash，如果任意值有改变, 则触发执行 onBlockChange
                 if (!height.equals(lastSyncBlockHeight) || !hash.equals(lastSyncBlockHash)) {
                     onBlockChange(blockHeader);

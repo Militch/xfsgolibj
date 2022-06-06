@@ -8,5 +8,4 @@ import java.util.List;
 public interface RPCClient {
     <T,D> T call(String method, D data, Class<T> tclass) throws Exception;
     <T,D> List<T> callList(String method, D data, Class<T> tClass) throws Exception;
-    Response proxy(String body) throws IOException;
 }

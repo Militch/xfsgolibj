@@ -11,9 +11,9 @@ public class Address {
         }
         this.data = Arrays.copyOfRange(data, 0, ADDRESS_LEN);
     }
-    public static Address fromString(String text) throws Exception {
+    public static Address fromString(String text){
         if(text == null || text.length() != 33){
-            throw new Exception("Address is empty or parse err");
+            return null;
         }
         return new Address(Base58.decode(text));
     }

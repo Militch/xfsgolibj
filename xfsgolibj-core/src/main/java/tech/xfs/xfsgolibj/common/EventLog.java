@@ -5,16 +5,16 @@ import com.google.gson.annotations.SerializedName;
 public class EventLog {
     @SerializedName("block_number")
     private Long blockNumber;
-    @SerializedName("block_Hash")
-    private String blockHash;
+    @SerializedName("block_hash")
+    private Hash blockHash;
     @SerializedName("transaction_hash")
-    private String transactionHash;
+    private Hash transactionHash;
     @SerializedName("event_hash")
-    private String eventHash;
+    private Hash eventHash;
     @SerializedName("event_value")
-    private String eventValue;
+    private byte[] eventValue;
     @SerializedName("address")
-    private String address;
+    private Address address;
 
     public Long getBlockNumber() {
         return blockNumber;
@@ -24,43 +24,43 @@ public class EventLog {
         this.blockNumber = blockNumber;
     }
 
-    public String getBlockHash() {
+    public Hash getBlockHash() {
         return blockHash;
     }
 
-    public void setBlockHash(String blockHash) {
+    public void setBlockHash(Hash blockHash) {
         this.blockHash = blockHash;
     }
 
-    public String getTransactionHash() {
+    public Hash getTransactionHash() {
         return transactionHash;
     }
 
-    public void setTransactionHash(String transactionHash) {
+    public void setTransactionHash(Hash transactionHash) {
         this.transactionHash = transactionHash;
     }
 
-    public String getEventHash() {
+    public Hash getEventHash() {
         return eventHash;
     }
 
-    public void setEventHash(String eventHash) {
+    public void setEventHash(Hash eventHash) {
         this.eventHash = eventHash;
     }
 
-    public String getEventValue() {
+    public byte[] getEventValue() {
         return eventValue;
     }
 
-    public void setEventValue(String eventValue) {
+    public void setEventValue(byte[] eventValue) {
         this.eventValue = eventValue;
     }
 
-    public String getAddress() {
+    public Address getAddress() {
         return address;
     }
 
-    public void setAddress(String address) {
+    public void setAddress(Address address) {
         this.address = address;
     }
 }
