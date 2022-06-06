@@ -51,9 +51,9 @@ public class ChainServiceTester {
         requester.setResponseMockListener(()->resp);
         return chainService.getReceiptByHash(transactionHash);
     }
-    public Account getAccount(String resp, Address address) throws Exception {
+    public Account getAccount(String resp, AccountRequest request) throws Exception {
         requester.setResponseMockListener(()->resp);
-        return chainService.getAccount(address);
+        return chainService.getAccount(request);
     }
     public BigInteger getBalance(String resp, Address address) throws Exception {
         requester.setResponseMockListener(()->resp);

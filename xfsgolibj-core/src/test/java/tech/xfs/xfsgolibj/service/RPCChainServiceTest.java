@@ -251,6 +251,8 @@ public class RPCChainServiceTest {
     @Test
     public void testGetAccount() throws Exception {
         Address address = Address.fromString("bQfi7kVUf2VAUsBk1R9FEzHXdtNtD98bs");
+        AccountRequest request = new AccountRequest();
+        request.setAddress(address);
         Account account = tester.getAccount("{\n" +
                 "    \"jsonrpc\": \"2.0\",\n" +
                 "    \"id\": 1,\n" +
@@ -261,7 +263,7 @@ public class RPCChainServiceTest {
                 "        \"code\": \"0xaa657890\",\n" +
                 "        \"state_root\": \"0x011f3f6cad22a2efb7ae1c8e484a01b51b384f4dee84a4c4e776d1abbc7ad9e4\"\n" +
                 "    }\n" +
-                "}", address);
+                "}", request);
         assert account != null;
         assert account.getBalance() != null && account.getBalance()
                 .equals(new BigInteger("20000000000000000000"));

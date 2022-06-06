@@ -5,15 +5,11 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.TypeAdapter;
-import okhttp3.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.web3j.utils.Strings;
 import tech.xfs.xfsgolibj.common.*;
 import tech.xfs.xfsgolibj.common.Address;
 import tech.xfs.xfsgolibj.core.RPCClient;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;

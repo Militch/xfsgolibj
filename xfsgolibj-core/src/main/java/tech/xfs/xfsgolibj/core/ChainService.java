@@ -51,17 +51,17 @@ public interface ChainService {
 
     /**
      * 根据条件获取事件日志
-     * @param logsRequest 请求条件
+     * @param logsRequest 请求参数
      * @return 日志列表
      */
     List<EventLog> getLogs(EventLogsRequest logsRequest) throws Exception;
 
     /**
      * 获取指定地址的账户信息
-     * @param address 地址
+     * @param request 请求参数
      * @return 账户信息
      */
-    Account getAccount(Address address) throws Exception;
+    Account getAccount(AccountRequest request) throws Exception;
 
     /**
      * 获取指定地址的账户余额

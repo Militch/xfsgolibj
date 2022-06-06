@@ -102,12 +102,13 @@ public class RPCChainService implements ChainService {
     }
 
     @Override
-    public Account getAccount(Address address) throws Exception {
-        if (address == null){
-            throw new IllegalArgumentException("address is null");
+    public Account getAccount(AccountRequest request) throws Exception {
+        if (request == null){
+            throw new IllegalArgumentException("request is null");
         }
         return client.call("State.GetAccount", new String[]{
-                Strings.valueOf(address),
+                Strings.valueOf(request.getStateRoot()),
+                Strings.valueOf(request.getAddress()),
         }, Account.class);
     }
 
