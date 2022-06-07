@@ -71,4 +71,12 @@ public class ChainServiceTester {
         requester.setResponseMockListener(()->resp);
         return chainService.getQueueTransactions();
     }
+    public Block getBlockByHash(String resp, Hash hash) throws Exception {
+        requester.setResponseMockListener(()->resp);
+        return chainService.getBlockByHash(hash);
+    }
+    public Block getBlockByNumber(String resp, Long number) throws Exception {
+        requester.setResponseMockListener(()->resp);
+        return chainService.getBlockByNumber(number);
+    }
 }

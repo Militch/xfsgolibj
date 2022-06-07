@@ -143,4 +143,24 @@ public class RPCChainService implements ChainService {
     public List<Transaction> getQueueTransactions() throws Exception {
         return client.callList("TxPool.GetQueue", null, Transaction.class);
     }
+
+    @Override
+    public Block getBlockByHash(Hash hash) throws Exception {
+        if(hash == null){
+            throw new IllegalArgumentException("block hash");
+        }
+        return client.call("Chain.GetBlockByHash",new String[]{
+                Strings.valueOf(hash),
+        },Block.class);
+    }
+
+    @Override
+    public Block getBlockByNumber(Long number) throws Exception {
+        if (number == null){
+            throw new IllegalArgumentException("block number");
+        }
+        return client.call("Chain.GetBlockByNumber", new String[]{
+                Strings.valueOf(number),
+        },Block.class);
+    }
 }

@@ -88,4 +88,6 @@ public interface ChainService {
      * @return 交易列表
      */
     List<Transaction> getQueueTransactions() throws Exception;
+    Block getBlockByHash(Hash hash) throws Exception;
+    Block getBlockByNumber(Long number) throws Exception;
 }

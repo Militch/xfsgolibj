@@ -154,7 +154,7 @@ public class RPCChainServiceTest {
         assert gotTransaction.getVersion() != null && gotTransaction.getVersion().equals(1);
         assert gotTransaction.getTo() != null && gotTransaction.getTo()
                 .equals(Address.fromString("bQfi7kVUf2VAUsBk1R9FEzHXdtNtD98bs"));
-        assert gotTransaction.getFrom() != null && gotTransaction.getTo()
+        assert gotTransaction.getFrom() != null && gotTransaction.getFrom()
                 .equals(Address.fromString("bQfi7kVUf2VAUsBk1R9FEzHXdtNtD98bs"));
         assert gotTransaction.getGasPrice() != null && gotTransaction.getGasPrice()
                 .equals(new BigInteger("10000000000"));
@@ -194,7 +194,7 @@ public class RPCChainServiceTest {
         assert transaction.getVersion() != null && transaction.getVersion().equals(1);
         assert transaction.getTo() != null && transaction.getTo()
                 .equals(Address.fromString("bQfi7kVUf2VAUsBk1R9FEzHXdtNtD98bs"));
-        assert transaction.getFrom() != null && transaction.getTo()
+        assert transaction.getFrom() != null && transaction.getFrom()
                 .equals(Address.fromString("bQfi7kVUf2VAUsBk1R9FEzHXdtNtD98bs"));
         assert transaction.getGasPrice() != null && transaction.getGasPrice()
                 .equals(new BigInteger("10000000000"));
@@ -319,7 +319,7 @@ public class RPCChainServiceTest {
         assert gotTransaction.getVersion() != null && gotTransaction.getVersion().equals(1);
         assert gotTransaction.getTo() != null && gotTransaction.getTo()
                 .equals(Address.fromString("bQfi7kVUf2VAUsBk1R9FEzHXdtNtD98bs"));
-        assert gotTransaction.getFrom() != null && gotTransaction.getTo()
+        assert gotTransaction.getFrom() != null && gotTransaction.getFrom()
                 .equals(Address.fromString("bQfi7kVUf2VAUsBk1R9FEzHXdtNtD98bs"));
         assert gotTransaction.getGasPrice() != null && gotTransaction.getGasPrice()
                 .equals(new BigInteger("10000000000"));
@@ -361,7 +361,7 @@ public class RPCChainServiceTest {
         assert gotTransaction.getVersion() != null && gotTransaction.getVersion().equals(1);
         assert gotTransaction.getTo() != null && gotTransaction.getTo()
                 .equals(Address.fromString("bQfi7kVUf2VAUsBk1R9FEzHXdtNtD98bs"));
-        assert gotTransaction.getFrom() != null && gotTransaction.getTo()
+        assert gotTransaction.getFrom() != null && gotTransaction.getFrom()
                 .equals(Address.fromString("bQfi7kVUf2VAUsBk1R9FEzHXdtNtD98bs"));
         assert gotTransaction.getGasPrice() != null && gotTransaction.getGasPrice()
                 .equals(new BigInteger("10000000000"));
@@ -374,6 +374,163 @@ public class RPCChainServiceTest {
                 .equals(Hash.fromHex("0x73eb9615a4f5ba80ac18aff2fa1feb30d3b750cd38c4a4cfdb5d482df8e2dd7f"));
         assert gotTransaction.getData() != null && Arrays.equals(gotTransaction.getData(),
                 Bytes.hexToBytes("0xd0230100000000000000000000000000000000000000000000000000000000000000000700000000000000555344546573740004000000000000005553445400000000120000000000000000000000000000000000000000000000000000000000003635c9adc5dea00000"));
+        assert gotTransaction.getSignature() != null && Arrays.equals(gotTransaction.getSignature(),
+                Bytes.hexToBytes("0xd47196c895989d5d5fb82f3bb178edcb7f34728be9ce5ed4976843b8afd1a1255e0e9f9ded9e8e211278daf23eb418b0f3270136e5946a9ad7b68fdaf2843ea000"));
+    }
+    @Test
+    public void testGetBlockByHash() throws Exception {
+        Hash hash = Hash.fromHex("0x0000039e3b8983b26ae829d4334e60fe050e03b43d153ed928336ab08736519e");
+        Block block = tester.getBlockByHash("{\n" +
+                "    \"id\": 1,\n" +
+                "    \"jsonrpc\": \"2.0\",\n" +
+                "    \"result\": {\n" +
+                "        \"height\": 27,\n" +
+                "        \"version\": 0,\n" +
+                "        \"hash_prev_block\": \"0x00000e05250821998fd37f5d3294a910677e1ed883d6b8f77a23395f1edb6996\",\n" +
+                "        \"timestamp\": 1637034387,\n" +
+                "        \"coinbase\": \"ctgcna1CHyh7ugd3XKkhAmKoPsvT1yeQR\",\n" +
+                "        \"state_root\": \"0x6f20b775dc6c5de59ae68f851718d0a6106ca05987497efc6a3364bdb1ad650d\",\n" +
+                "        \"transactions_root\": \"0x65811cbbbe6204b0a5e413a20dd0d4397d8758c7709dfbf2681f1888edb82c64\",\n" +
+                "        \"receipts_root\": \"0x11b93943e587b50c4172031d20765b69229578992df7b10394ff5a6749596d83\",\n" +
+                "        \"gas_limit\": 2500000,\n" +
+                "        \"gas_used\": 25000,\n" +
+                "        \"bits\": 1069547550,\n" +
+                "        \"nonce\": 162206,\n" +
+                "        \"extranonce\": 1129726201923012695,\n" +
+                "        \"hash\": \"0x0000039e3b8983b26ae829d4334e60fe050e03b43d153ed928336ab08736519e\",\n" +
+                "        \"transactions\": [\n" +
+                "            {\n" +
+                "                \"version\": 0,\n" +
+                "                \"to\": \"ScWia9CEgy3N2zxrhjTG8y3g5YHX57QPa\",\n" +
+                "                \"gas_price\": 10000000000,\n" +
+                "                \"gas_limit\": 2500000,\n" +
+                "                \"nonce\": 0,\n" +
+                "                \"value\": 1000000000000000000,\n" +
+                "                \"from\": \"ctgcna1CHyh7ugd3XKkhAmKoPsvT1yeQR\",\n" +
+                "                \"hash\": \"0x30a81c6bf061c3de41573649d1939c4f90287d560d743eef3af5c52fa8398f3e\",\n" +
+                "                \"data\": null,\n" +
+                "                \"signature\": \"0xd47196c895989d5d5fb82f3bb178edcb7f34728be9ce5ed4976843b8afd1a1255e0e9f9ded9e8e211278daf23eb418b0f3270136e5946a9ad7b68fdaf2843ea000\"\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    }\n" +
+                "}",hash);
+        assert block != null;
+        assert block.getHeight() != null && block.getHeight().equals(27L);
+        assert block.getVersion() != null && block.getVersion().equals(0);
+        assert block.getTimestamp() != null && block.getTimestamp().equals(1637034387L);
+        assert block.getCoinbase() != null && block.getCoinbase()
+                .equals(Address.fromString("ctgcna1CHyh7ugd3XKkhAmKoPsvT1yeQR"));
+        assert block.getStateRoot() != null && block.getStateRoot()
+                .equals(Hash.fromHex("0x6f20b775dc6c5de59ae68f851718d0a6106ca05987497efc6a3364bdb1ad650d"));
+        assert block.getTransactionsRoot() != null && block.getTransactionsRoot()
+                .equals(Hash.fromHex("0x65811cbbbe6204b0a5e413a20dd0d4397d8758c7709dfbf2681f1888edb82c64"));
+        assert block.getReceiptsRoot() != null && block.getReceiptsRoot()
+                .equals(Hash.fromHex("0x11b93943e587b50c4172031d20765b69229578992df7b10394ff5a6749596d83"));
+        assert block.getGasLimit() != null && block.getGasLimit().equals(2500000L);
+        assert block.getGasUsed() != null && block.getGasUsed().equals(25000L);
+        assert block.getBits() != null && block.getBits().equals(1069547550L);
+        assert block.getNonce() != null && block.getNonce().equals(162206L);
+        assert block.getExtraNonce() != null && block.getExtraNonce()
+                .equals(new BigInteger("1129726201923012695"));
+        assert block.getHash() != null && block.getHash()
+                .equals(Hash.fromHex("0x0000039e3b8983b26ae829d4334e60fe050e03b43d153ed928336ab08736519e"));
+
+        assert block.getTransactions() != null && block.getTransactions().size() == 1;
+        Transaction gotTransaction = block.getTransactions().get(0);
+        assert gotTransaction != null;
+        assert gotTransaction.getVersion() != null && gotTransaction.getVersion().equals(0);
+        assert gotTransaction.getTo() != null && gotTransaction.getTo()
+                .equals(Address.fromString("ScWia9CEgy3N2zxrhjTG8y3g5YHX57QPa"));
+        assert gotTransaction.getFrom() != null && gotTransaction.getFrom()
+                .equals(Address.fromString("ctgcna1CHyh7ugd3XKkhAmKoPsvT1yeQR"));
+        assert gotTransaction.getGasPrice() != null && gotTransaction.getGasPrice()
+                .equals(new BigInteger("10000000000"));
+        assert gotTransaction.getGasLimit() != null && gotTransaction.getGasLimit()
+                .equals(new BigInteger("2500000"));
+        assert gotTransaction.getNonce() != null && gotTransaction.getNonce().equals(0L);
+        assert gotTransaction.getValue() != null && gotTransaction.getValue()
+                .equals(new BigInteger("1000000000000000000"));
+        assert gotTransaction.getHash() != null && gotTransaction.getHash()
+                .equals(Hash.fromHex("0x30a81c6bf061c3de41573649d1939c4f90287d560d743eef3af5c52fa8398f3e"));
+        assert gotTransaction.getData() == null;
+        assert gotTransaction.getSignature() != null && Arrays.equals(gotTransaction.getSignature(),
+                Bytes.hexToBytes("0xd47196c895989d5d5fb82f3bb178edcb7f34728be9ce5ed4976843b8afd1a1255e0e9f9ded9e8e211278daf23eb418b0f3270136e5946a9ad7b68fdaf2843ea000"));
+    }
+    @Test
+    public void testGetBlockByNumber() throws Exception {
+        Block block = tester.getBlockByNumber("{\n" +
+                "    \"id\": 1,\n" +
+                "    \"jsonrpc\": \"2.0\",\n" +
+                "    \"result\": {\n" +
+                "        \"height\": 27,\n" +
+                "        \"version\": 0,\n" +
+                "        \"hash_prev_block\": \"0x00000e05250821998fd37f5d3294a910677e1ed883d6b8f77a23395f1edb6996\",\n" +
+                "        \"timestamp\": 1637034387,\n" +
+                "        \"coinbase\": \"ctgcna1CHyh7ugd3XKkhAmKoPsvT1yeQR\",\n" +
+                "        \"state_root\": \"0x6f20b775dc6c5de59ae68f851718d0a6106ca05987497efc6a3364bdb1ad650d\",\n" +
+                "        \"transactions_root\": \"0x65811cbbbe6204b0a5e413a20dd0d4397d8758c7709dfbf2681f1888edb82c64\",\n" +
+                "        \"receipts_root\": \"0x11b93943e587b50c4172031d20765b69229578992df7b10394ff5a6749596d83\",\n" +
+                "        \"gas_limit\": 2500000,\n" +
+                "        \"gas_used\": 25000,\n" +
+                "        \"bits\": 1069547550,\n" +
+                "        \"nonce\": 162206,\n" +
+                "        \"extranonce\": 1129726201923012695,\n" +
+                "        \"hash\": \"0x0000039e3b8983b26ae829d4334e60fe050e03b43d153ed928336ab08736519e\",\n" +
+                "        \"transactions\": [\n" +
+                "            {\n" +
+                "                \"version\": 0,\n" +
+                "                \"to\": \"ScWia9CEgy3N2zxrhjTG8y3g5YHX57QPa\",\n" +
+                "                \"gas_price\": 10000000000,\n" +
+                "                \"gas_limit\": 2500000,\n" +
+                "                \"nonce\": 0,\n" +
+                "                \"value\": 1000000000000000000,\n" +
+                "                \"from\": \"ctgcna1CHyh7ugd3XKkhAmKoPsvT1yeQR\",\n" +
+                "                \"hash\": \"0x30a81c6bf061c3de41573649d1939c4f90287d560d743eef3af5c52fa8398f3e\",\n" +
+                "                \"data\": null,\n" +
+                "                \"signature\": \"0xd47196c895989d5d5fb82f3bb178edcb7f34728be9ce5ed4976843b8afd1a1255e0e9f9ded9e8e211278daf23eb418b0f3270136e5946a9ad7b68fdaf2843ea000\"\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    }\n" +
+                "}", 27L);
+        assert block != null;
+        assert block.getHeight() != null && block.getHeight().equals(27L);
+        assert block.getVersion() != null && block.getVersion().equals(0);
+        assert block.getTimestamp() != null && block.getTimestamp().equals(1637034387L);
+        assert block.getCoinbase() != null && block.getCoinbase()
+                .equals(Address.fromString("ctgcna1CHyh7ugd3XKkhAmKoPsvT1yeQR"));
+        assert block.getStateRoot() != null && block.getStateRoot()
+                .equals(Hash.fromHex("0x6f20b775dc6c5de59ae68f851718d0a6106ca05987497efc6a3364bdb1ad650d"));
+        assert block.getTransactionsRoot() != null && block.getTransactionsRoot()
+                .equals(Hash.fromHex("0x65811cbbbe6204b0a5e413a20dd0d4397d8758c7709dfbf2681f1888edb82c64"));
+        assert block.getReceiptsRoot() != null && block.getReceiptsRoot()
+                .equals(Hash.fromHex("0x11b93943e587b50c4172031d20765b69229578992df7b10394ff5a6749596d83"));
+        assert block.getGasLimit() != null && block.getGasLimit().equals(2500000L);
+        assert block.getGasUsed() != null && block.getGasUsed().equals(25000L);
+        assert block.getBits() != null && block.getBits().equals(1069547550L);
+        assert block.getNonce() != null && block.getNonce().equals(162206L);
+        assert block.getExtraNonce() != null && block.getExtraNonce()
+                .equals(new BigInteger("1129726201923012695"));
+        assert block.getHash() != null && block.getHash()
+                .equals(Hash.fromHex("0x0000039e3b8983b26ae829d4334e60fe050e03b43d153ed928336ab08736519e"));
+
+        assert block.getTransactions() != null && block.getTransactions().size() == 1;
+        Transaction gotTransaction = block.getTransactions().get(0);
+        assert gotTransaction != null;
+        assert gotTransaction.getVersion() != null && gotTransaction.getVersion().equals(0);
+        assert gotTransaction.getTo() != null && gotTransaction.getTo()
+                .equals(Address.fromString("ScWia9CEgy3N2zxrhjTG8y3g5YHX57QPa"));
+        assert gotTransaction.getFrom() != null && gotTransaction.getFrom()
+                .equals(Address.fromString("ctgcna1CHyh7ugd3XKkhAmKoPsvT1yeQR"));
+        assert gotTransaction.getGasPrice() != null && gotTransaction.getGasPrice()
+                .equals(new BigInteger("10000000000"));
+        assert gotTransaction.getGasLimit() != null && gotTransaction.getGasLimit()
+                .equals(new BigInteger("2500000"));
+        assert gotTransaction.getNonce() != null && gotTransaction.getNonce().equals(0L);
+        assert gotTransaction.getValue() != null && gotTransaction.getValue()
+                .equals(new BigInteger("1000000000000000000"));
+        assert gotTransaction.getHash() != null && gotTransaction.getHash()
+                .equals(Hash.fromHex("0x30a81c6bf061c3de41573649d1939c4f90287d560d743eef3af5c52fa8398f3e"));
+        assert gotTransaction.getData() == null;
         assert gotTransaction.getSignature() != null && Arrays.equals(gotTransaction.getSignature(),
                 Bytes.hexToBytes("0xd47196c895989d5d5fb82f3bb178edcb7f34728be9ce5ed4976843b8afd1a1255e0e9f9ded9e8e211278daf23eb418b0f3270136e5946a9ad7b68fdaf2843ea000"));
     }

@@ -566,7 +566,7 @@ public class StdTokenExample {
                             System.out.println("无数据");
                             break;
                         }
-                        System.out.printf("%-31s %-17s", "账户地址", "余额");
+                        System.out.printf("%-30s %-17s", "账户地址", "余额");
                         System.out.println();
                         for (Address address : accountMap.keySet()) {
                             String addressString = address.toBase58();
