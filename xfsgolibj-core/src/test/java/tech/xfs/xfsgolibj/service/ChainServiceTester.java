@@ -87,4 +87,12 @@ public class ChainServiceTester {
         requester.setResponseMockListener(()->resp);
         return chainService.getBlockHashesByRange(start, end);
     }
+    public BlockHeader getBlockHeaderByNumber(String resp, long number) throws Exception {
+        requester.setResponseMockListener(()->resp);
+        return chainService.getBlockHeaderByNumber(number);
+    }
+    public BlockHeader getBlockHeaderByHash(String resp, Hash hash) throws Exception {
+        requester.setResponseMockListener(()->resp);
+        return chainService.getBlockHeaderByHash(hash);
+    }
 }

@@ -85,6 +85,92 @@ public class RPCChainServiceTest {
                 .equals(Hash.fromHex("0x000000f894ee1f675d9ae1918c01aa4d34ea76e64de79929c5b8663e510d9a69"));
     }
     @Test
+    public void testGetBlockHeaderByHash() throws Exception {
+        BlockHeader blockHeader = tester.getBlockHeaderByHash( "{\n" +
+                "    \"id\": 1,\n" +
+                "    \"jsonrpc\": \"2.0\",\n" +
+                "    \"result\": {\n" +
+                "        \"height\": 230,\n" +
+                "        \"version\": 0,\n" +
+                "        \"hash_prev_block\": \"0x0000009da0373ef1737f52619fa362aa3597d4c66238b65ba74327090816253c\",\n" +
+                "        \"timestamp\": 1641185270,\n" +
+                "        \"coinbase\": \"YyLpW2o4zTjRDV3rQez6aiLVfgCdbJz4y\",\n" +
+                "        \"state_root\": \"0xd911e6ed810598baaf97472792a6a9f9997ea8908ea0253d9abaaa362437f121\",\n" +
+                "        \"transactions_root\": \"0x0000000000000000000000000000000000000000000000000000000000000000\",\n" +
+                "        \"receipts_root\": \"0x0000000000000000000000000000000000000000000000000000000000000000\",\n" +
+                "        \"gas_limit\": 2500000,\n" +
+                "        \"gas_used\": 0,\n" +
+                "        \"bits\": 4278190109,\n" +
+                "        \"nonce\": 74342,\n" +
+                "        \"extranonce\": 13886229815286710583,\n" +
+                "        \"hash\": \"0x000000f894ee1f675d9ae1918c01aa4d34ea76e64de79929c5b8663e510d9a69\"\n" +
+                "    }\n" +
+                "}", Hash.fromHex("0x000000f894ee1f675d9ae1918c01aa4d34ea76e64de79929c5b8663e510d9a69"));
+        assert blockHeader != null;
+        assert blockHeader.getHeight() != null && blockHeader.getHeight().equals(230L);
+        assert blockHeader.getVersion() != null && blockHeader.getVersion().equals(0);
+        assert blockHeader.getTimestamp() != null && blockHeader.getTimestamp().equals(1641185270L);
+        assert blockHeader.getCoinbase() != null && blockHeader.getCoinbase()
+                .equals(Address.fromString("YyLpW2o4zTjRDV3rQez6aiLVfgCdbJz4y"));
+        assert blockHeader.getStateRoot() != null && blockHeader.getStateRoot()
+                .equals(Hash.fromHex("0xd911e6ed810598baaf97472792a6a9f9997ea8908ea0253d9abaaa362437f121"));
+        assert blockHeader.getTransactionsRoot() != null && blockHeader.getTransactionsRoot()
+                .equals(Hash.fromHex("0x0000000000000000000000000000000000000000000000000000000000000000"));
+        assert blockHeader.getReceiptsRoot() != null && blockHeader.getReceiptsRoot()
+                .equals(Hash.fromHex("0x0000000000000000000000000000000000000000000000000000000000000000"));
+        assert blockHeader.getGasLimit() != null && blockHeader.getGasLimit().equals(2500000L);
+        assert blockHeader.getGasUsed() != null && blockHeader.getGasUsed().equals(0L);
+        assert blockHeader.getBits() != null && blockHeader.getBits().equals(4278190109L);
+        assert blockHeader.getNonce() != null && blockHeader.getNonce().equals(74342L);
+        assert blockHeader.getExtraNonce() != null && blockHeader.getExtraNonce()
+                .equals(new BigInteger("13886229815286710583"));
+        assert blockHeader.getHash() != null && blockHeader.getHash()
+                .equals(Hash.fromHex("0x000000f894ee1f675d9ae1918c01aa4d34ea76e64de79929c5b8663e510d9a69"));
+    }
+    @Test
+    public void testGetBlockHeaderByNumber() throws Exception {
+        BlockHeader blockHeader = tester.getBlockHeaderByNumber( "{\n" +
+                "    \"id\": 1,\n" +
+                "    \"jsonrpc\": \"2.0\",\n" +
+                "    \"result\": {\n" +
+                "        \"height\": 230,\n" +
+                "        \"version\": 0,\n" +
+                "        \"hash_prev_block\": \"0x0000009da0373ef1737f52619fa362aa3597d4c66238b65ba74327090816253c\",\n" +
+                "        \"timestamp\": 1641185270,\n" +
+                "        \"coinbase\": \"YyLpW2o4zTjRDV3rQez6aiLVfgCdbJz4y\",\n" +
+                "        \"state_root\": \"0xd911e6ed810598baaf97472792a6a9f9997ea8908ea0253d9abaaa362437f121\",\n" +
+                "        \"transactions_root\": \"0x0000000000000000000000000000000000000000000000000000000000000000\",\n" +
+                "        \"receipts_root\": \"0x0000000000000000000000000000000000000000000000000000000000000000\",\n" +
+                "        \"gas_limit\": 2500000,\n" +
+                "        \"gas_used\": 0,\n" +
+                "        \"bits\": 4278190109,\n" +
+                "        \"nonce\": 74342,\n" +
+                "        \"extranonce\": 13886229815286710583,\n" +
+                "        \"hash\": \"0x000000f894ee1f675d9ae1918c01aa4d34ea76e64de79929c5b8663e510d9a69\"\n" +
+                "    }\n" +
+                "}",1);
+        assert blockHeader != null;
+        assert blockHeader.getHeight() != null && blockHeader.getHeight().equals(230L);
+        assert blockHeader.getVersion() != null && blockHeader.getVersion().equals(0);
+        assert blockHeader.getTimestamp() != null && blockHeader.getTimestamp().equals(1641185270L);
+        assert blockHeader.getCoinbase() != null && blockHeader.getCoinbase()
+                .equals(Address.fromString("YyLpW2o4zTjRDV3rQez6aiLVfgCdbJz4y"));
+        assert blockHeader.getStateRoot() != null && blockHeader.getStateRoot()
+                .equals(Hash.fromHex("0xd911e6ed810598baaf97472792a6a9f9997ea8908ea0253d9abaaa362437f121"));
+        assert blockHeader.getTransactionsRoot() != null && blockHeader.getTransactionsRoot()
+                .equals(Hash.fromHex("0x0000000000000000000000000000000000000000000000000000000000000000"));
+        assert blockHeader.getReceiptsRoot() != null && blockHeader.getReceiptsRoot()
+                .equals(Hash.fromHex("0x0000000000000000000000000000000000000000000000000000000000000000"));
+        assert blockHeader.getGasLimit() != null && blockHeader.getGasLimit().equals(2500000L);
+        assert blockHeader.getGasUsed() != null && blockHeader.getGasUsed().equals(0L);
+        assert blockHeader.getBits() != null && blockHeader.getBits().equals(4278190109L);
+        assert blockHeader.getNonce() != null && blockHeader.getNonce().equals(74342L);
+        assert blockHeader.getExtraNonce() != null && blockHeader.getExtraNonce()
+                .equals(new BigInteger("13886229815286710583"));
+        assert blockHeader.getHash() != null && blockHeader.getHash()
+                .equals(Hash.fromHex("0x000000f894ee1f675d9ae1918c01aa4d34ea76e64de79929c5b8663e510d9a69"));
+    }
+    @Test
     public void testGetLogs() throws Exception {
         EventLogsRequest eventLogsRequest = new EventLogsRequest();
         List<EventLog> eventLogList = tester.getLogs("{\n" +

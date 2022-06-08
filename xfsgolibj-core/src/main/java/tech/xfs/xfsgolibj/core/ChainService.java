@@ -33,6 +33,20 @@ public interface ChainService {
      */
     BlockHeader getHead() throws Exception;
 
+    /**
+     * 根据区块高度获取区块头信息
+     * @param number 区块高度
+     * @return 区块头
+     */
+    BlockHeader getBlockHeaderByNumber(long number) throws Exception;
+
+    /**
+     * 根据区块Hash查询区块头信息
+     * @param hash 区块hash
+     * @return 区块头
+     */
+    BlockHeader getBlockHeaderByHash(Hash hash) throws Exception;
+
     List<Transaction> getTransactionsByBlockHash(Hash hash) throws Exception;
 
     /**

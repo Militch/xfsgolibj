@@ -60,6 +60,23 @@ public class RPCChainService implements ChainService {
     }
 
     @Override
+    public BlockHeader getBlockHeaderByNumber(long number) throws Exception {
+        return client.call("Chain.GetBlockHeaderByNumber", new String[]{
+                Strings.valueOf(number)
+        }, BlockHeader.class);
+    }
+
+    @Override
+    public BlockHeader getBlockHeaderByHash(Hash hash) throws Exception {
+        if(hash == null){
+            throw new IllegalArgumentException("hash is null");
+        }
+        return client.call("Chain.GetBlockHeaderByHash", new String[]{
+                Strings.valueOf(hash)
+        }, BlockHeader.class);
+    }
+
+    @Override
     public List<Transaction> getTransactionsByBlockHash(Hash blockHash) throws Exception {
         if (blockHash == null){
             throw new IllegalArgumentException("block hash is empty");
@@ -119,7 +136,7 @@ public class RPCChainService implements ChainService {
             throw new IllegalArgumentException("address is null");
         }
         return client.call("State.GetBalance", new String[]{
-                String.valueOf(address),
+                Strings.valueOf(address),
         },BigInteger.class);
     }
 
