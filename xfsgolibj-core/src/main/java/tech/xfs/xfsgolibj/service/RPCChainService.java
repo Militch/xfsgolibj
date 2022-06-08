@@ -9,6 +9,7 @@ import tech.xfs.xfsgolibj.utils.Strings;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
@@ -162,5 +163,22 @@ public class RPCChainService implements ChainService {
         return client.call("Chain.GetBlockByNumber", new String[]{
                 Strings.valueOf(number),
         },Block.class);
+    }
+
+    @Override
+    public List<Hash> getBlockHashesByRange(long start, long end) throws Exception {
+        if (start < 0 || end < 0){
+            throw new IllegalArgumentException("range is < 0");
+        }
+        long rangeMin = Math.min(start, end);
+        long rangeMax = Math.max(start, end);
+        List<String[]> request = new ArrayList<>();
+        for (long i=rangeMin; i<rangeMax; i++){
+            request.add(new String[]{String.valueOf(i)});
+        }
+        if (rangeMin == rangeMax){
+            request.add(new String[]{String.valueOf(rangeMin)});
+        }
+        return client.callBatch("Chain.GetBlockHashByNumber", request, Hash.class);
     }
 }

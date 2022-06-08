@@ -88,6 +88,26 @@ public interface ChainService {
      * @return 交易列表
      */
     List<Transaction> getQueueTransactions() throws Exception;
+
+    /**
+     * 获取指定区块哈希的区块信息
+     * @param hash 区块哈希
+     * @return 区块信息
+     */
     Block getBlockByHash(Hash hash) throws Exception;
+
+    /**
+     *  获取指定区块高度的区块信息
+     * @param number 区块高度
+     * @return 区块信息
+     */
     Block getBlockByNumber(Long number) throws Exception;
+
+    /**
+     * 获取指定范围内的所有区块哈希列表
+     * @param start 开始高度
+     * @param end 结束高度
+     * @return 区块哈希列表
+     */
+    List<Hash> getBlockHashesByRange(long start, long end) throws Exception;
 }

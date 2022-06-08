@@ -1,10 +1,10 @@
 package tech.xfs.xfsgolibj.jsonrpc;
 
-public class RequestParams<T> {
+public class RequestParams {
     private String jsonrpc;
     private int id;
     private String method;
-    private T params;
+    private Object params;
 
     public String getJsonrpc() {
         return jsonrpc;
@@ -30,11 +30,11 @@ public class RequestParams<T> {
         this.method = method;
     }
 
-    public T getParams() {
+    public Object getParams() {
         return params;
     }
 
-    public void setParams(T params) {
+    public void setParams(Object params) {
         this.params = params;
     }
 }

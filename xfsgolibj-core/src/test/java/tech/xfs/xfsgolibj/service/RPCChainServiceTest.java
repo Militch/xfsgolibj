@@ -534,4 +534,26 @@ public class RPCChainServiceTest {
         assert gotTransaction.getSignature() != null && Arrays.equals(gotTransaction.getSignature(),
                 Bytes.hexToBytes("0xd47196c895989d5d5fb82f3bb178edcb7f34728be9ce5ed4976843b8afd1a1255e0e9f9ded9e8e211278daf23eb418b0f3270136e5946a9ad7b68fdaf2843ea000"));
     }
+
+    @Test
+    public void testGetBlockHashesByRange() throws Exception {
+        List<Hash> hashes = tester.getBlockHashesByRange("[\n" +
+                "    {\n" +
+                "        \"jsonrpc\": \"2.0\",\n" +
+                "        \"id\": null,\n" +
+                "        \"result\": \"0x4af4ce2938a113f8e704151951f14611630718e0871bcc8843b2b40dc1b289db\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "        \"jsonrpc\": \"2.0\",\n" +
+                "        \"id\": null,\n" +
+                "        \"result\": \"0x0000005dcc1f1df6049ae09f911b3e7abcfa0d6862b1ab611f9392b3aac9244c\"\n" +
+                "    }\n" +
+                "]", 0,1);
+        assert hashes != null && hashes.size() == 2;
+        Hash first = hashes.get(0); Hash last = hashes.get(1);
+        Hash wantFirst = Hash.fromHex("0x4af4ce2938a113f8e704151951f14611630718e0871bcc8843b2b40dc1b289db");
+        Hash wantLast = Hash.fromHex("0x0000005dcc1f1df6049ae09f911b3e7abcfa0d6862b1ab611f9392b3aac9244c");
+        assert first.equals(wantFirst);
+        assert last.equals(wantLast);
+    }
 }
