@@ -104,6 +104,13 @@ public interface ChainService {
     Block getBlockByNumber(Long number) throws Exception;
 
     /**
+     * 获取指定高度的区块哈希
+     * @param number 高度
+     * @return 区块hash
+     */
+    Hash getBlockHashByNumber(long number) throws Exception;
+
+    /**
      * 获取指定范围内的所有区块哈希列表
      * @param start 开始高度
      * @param end 结束高度

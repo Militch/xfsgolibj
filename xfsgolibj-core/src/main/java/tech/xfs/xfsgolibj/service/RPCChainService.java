@@ -166,6 +166,14 @@ public class RPCChainService implements ChainService {
     }
 
     @Override
+    public Hash getBlockHashByNumber(long number) throws Exception {
+        if (number < 0){
+            throw new IllegalArgumentException("number is < 0");
+        }
+        return client.call("Chain.GetBlockHashByNumber", new String[]{String.valueOf(number)},Hash.class);
+    }
+
+    @Override
     public List<Hash> getBlockHashesByRange(long start, long end) throws Exception {
         if (start < 0 || end < 0){
             throw new IllegalArgumentException("range is < 0");

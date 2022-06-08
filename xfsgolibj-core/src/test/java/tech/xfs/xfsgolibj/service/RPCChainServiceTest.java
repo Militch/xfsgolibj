@@ -534,6 +534,17 @@ public class RPCChainServiceTest {
         assert gotTransaction.getSignature() != null && Arrays.equals(gotTransaction.getSignature(),
                 Bytes.hexToBytes("0xd47196c895989d5d5fb82f3bb178edcb7f34728be9ce5ed4976843b8afd1a1255e0e9f9ded9e8e211278daf23eb418b0f3270136e5946a9ad7b68fdaf2843ea000"));
     }
+    @Test
+    public void testGetBlockHashByNumber() throws Exception {
+        Hash gotHash = tester.getBlockHashByNumber("{\n" +
+                "    \"jsonrpc\": \"2.0\",\n" +
+                "    \"id\": 1,\n" +
+                "    \"result\": \"0x4af4ce2938a113f8e704151951f14611630718e0871bcc8843b2b40dc1b289db\"\n" +
+                "}",0);
+
+        assert gotHash != null;
+        assert gotHash.equals(Hash.fromHex("0x4af4ce2938a113f8e704151951f14611630718e0871bcc8843b2b40dc1b289db"));
+    }
 
     @Test
     public void testGetBlockHashesByRange() throws Exception {
