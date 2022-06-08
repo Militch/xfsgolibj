@@ -103,6 +103,7 @@ public class HTTPRPCClient implements RPCClient {
             }
             if (resultElement == null || resultElement.isJsonNull()){
                 out.add(null);
+                continue;
             }
             T t = g.fromJson(resultElement, tClass);
             out.add(t);

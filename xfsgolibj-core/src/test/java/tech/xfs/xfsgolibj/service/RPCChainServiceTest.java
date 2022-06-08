@@ -555,5 +555,22 @@ public class RPCChainServiceTest {
         Hash wantLast = Hash.fromHex("0x0000005dcc1f1df6049ae09f911b3e7abcfa0d6862b1ab611f9392b3aac9244c");
         assert first.equals(wantFirst);
         assert last.equals(wantLast);
+        List<Hash> hashesNeedNull = tester.getBlockHashesByRange("[\n" +
+                "    {\n" +
+                "        \"jsonrpc\": \"2.0\",\n" +
+                "        \"id\": null,\n" +
+                "        \"result\": \"0x4af4ce2938a113f8e704151951f14611630718e0871bcc8843b2b40dc1b289db\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "        \"jsonrpc\": \"2.0\",\n" +
+                "        \"id\": null,\n" +
+                "        \"result\": null\n" +
+                "    }\n" +
+                "]", 0,1);
+        assert hashesNeedNull != null && hashesNeedNull.size() == 2;
+        first = hashesNeedNull.get(0); last = hashesNeedNull.get(1);
+        wantFirst = Hash.fromHex("0x4af4ce2938a113f8e704151951f14611630718e0871bcc8843b2b40dc1b289db");
+        assert first.equals(wantFirst);
+        assert last == null;
     }
 }
