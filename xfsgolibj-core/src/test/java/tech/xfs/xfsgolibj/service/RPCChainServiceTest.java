@@ -664,10 +664,6 @@ public class RPCChainServiceTest {
                 "        \"result\": null\n" +
                 "    }\n" +
                 "]", 0,1);
-        assert hashesNeedNull != null && hashesNeedNull.size() == 2;
-        first = hashesNeedNull.get(0); last = hashesNeedNull.get(1);
-        wantFirst = Hash.fromHex("0x4af4ce2938a113f8e704151951f14611630718e0871bcc8843b2b40dc1b289db");
-        assert first.equals(wantFirst);
-        assert last == null;
+        assert hashesNeedNull != null && hashesNeedNull.size() == 1;
     }
 }

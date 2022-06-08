@@ -9,10 +9,8 @@ import tech.xfs.xfsgolibj.utils.Strings;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class RPCChainService implements ChainService {
     private final RPCClient client;
@@ -204,6 +202,10 @@ public class RPCChainService implements ChainService {
         if (rangeMin == rangeMax){
             request.add(new String[]{String.valueOf(rangeMin)});
         }
-        return client.callBatch("Chain.GetBlockHashByNumber", request, Hash.class);
+        List<Hash> all = client.callBatch("Chain.GetBlockHashByNumber", request, Hash.class);
+        if (all == null){
+            return null;
+        }
+        return all.stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
 }
