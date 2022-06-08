@@ -83,7 +83,7 @@ public class HTTPRPCClient implements RPCClient {
     public <T,D> List<T> callBatch(String method, List<D[]> data, Class<T> tClass, boolean ignoreError) throws Exception {
         List<RequestParams> batches = new ArrayList<>();
         for (int i=0; i<data.size(); i++){
-            RequestParams params = requestPack(method, data, i);
+            RequestParams params = requestPack(method, data.get(i), i);
             batches.add(params);
         }
         String requestJsonString = g.toJson(batches);
