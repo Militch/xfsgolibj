@@ -138,4 +138,11 @@ public interface ChainService {
      * @return 区块列表
      */
     List<Block> getBlocksByBatch(List<Hash> hashes) throws Exception;
+
+    /**
+     * 查询整个区块的所有交易回执
+     * @param block 区块
+     * @return 交易回执列表
+     */
+    List<TransactionReceipt> getReceiptsByBlock(Block block) throws Exception;
 }

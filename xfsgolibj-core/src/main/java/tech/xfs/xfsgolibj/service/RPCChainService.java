@@ -224,4 +224,27 @@ public class RPCChainService implements ChainService {
         }
         return all.stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
+
+    @Override
+    public List<TransactionReceipt> getReceiptsByBlock(Block block) throws Exception {
+        if (block == null){
+            throw new IllegalArgumentException("block is null");
+        }
+        List<Transaction> txs = block.getTransactions();
+        if (txs == null || txs.size() == 0){
+            return null;
+        }
+        List<String[]> request = new ArrayList<>();
+        for (Transaction tx : txs) {
+            request.add(new String[]{
+                    String.valueOf(tx.getHash())
+            });
+        }
+        List<TransactionReceipt> all = client.callBatch("Chain.GetReceiptByHash",
+                request, TransactionReceipt.class);
+        if (all == null){
+            return null;
+        }
+        return all.stream().filter(Objects::nonNull).collect(Collectors.toList());
+    }
 }
