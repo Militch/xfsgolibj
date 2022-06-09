@@ -208,4 +208,20 @@ public class RPCChainService implements ChainService {
         }
         return all.stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
+
+    @Override
+    public List<Block> getBlocksByBatch(List<Hash> hashes) throws Exception {
+        if (hashes == null || hashes.size() == 0){
+            throw new IllegalArgumentException("hashes is empty");
+        }
+        List<String[]> request = new ArrayList<>();
+        for (Hash hash : hashes) {
+            request.add(new String[]{String.valueOf(hash)});
+        }
+        List<Block> all = client.callBatch("Chain.GetBlockByHash", request, Block.class);
+        if (all == null){
+            return null;
+        }
+        return all.stream().filter(Objects::nonNull).collect(Collectors.toList());
+    }
 }

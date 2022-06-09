@@ -131,4 +131,11 @@ public interface ChainService {
      * @return 区块哈希列表
      */
     List<Hash> getBlockHashesByRange(long start, long end) throws Exception;
+
+    /**
+     * 批量获取区块信息
+     * @param hashes 区块哈希
+     * @return 区块列表
+     */
+    List<Block> getBlocksByBatch(List<Hash> hashes) throws Exception;
 }
