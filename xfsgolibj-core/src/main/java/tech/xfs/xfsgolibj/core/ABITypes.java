@@ -27,6 +27,9 @@ public class ABITypes {
         if (type == null){
             throw new Exception("type is null");
         }
+        if (obj == null){
+            return null;
+        }
         switch (type){
             case "CTypeString":
                 if (!(obj instanceof String)){
@@ -85,6 +88,9 @@ public class ABITypes {
                     throw new Exception("type check err");
                 }
                 byte[] addressBuf = ((Address) obj).toBytes();
+                if (addressBuf == null){
+                    return null;
+                }
                 return Arrays.copyOf(addressBuf, calcOutLens(addressBuf.length));
             case "CTypeBool":
                 if (!(obj instanceof Boolean)){

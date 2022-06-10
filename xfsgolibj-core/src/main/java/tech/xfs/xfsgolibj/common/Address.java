@@ -31,6 +31,9 @@ public class Address {
     }
 
     public String toBase58(){
+        if (Arrays.equals(data, new byte[ADDRESS_LEN])){
+            return null;
+        }
         return Base58.encode(data);
     }
 

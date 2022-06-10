@@ -60,6 +60,27 @@ public class StdTokenContract extends Contract<StdTokenContract.Caller,StdTokenC
             Object result = call(opts, "Allowance", owner, spender);
             return (BigInteger) result;
         }
+        public Boolean Transfer(CallOpts opts, Address to, BigInteger amount) throws Exception {
+            Object result = call(opts, "Transfer",to, amount);
+            return (Boolean) result;
+        }
+
+        public Boolean TransferFrom(CallOpts opts, Address from, Address to, BigInteger amount) throws Exception {
+            Object result = call(opts, "TransferFrom",from, to, amount);
+            return (Boolean) result;
+        }
+        public Boolean Approve(CallOpts opts, Address to, BigInteger amount) throws Exception {
+            Object result = call(opts, "Approve", to, amount);
+            return (Boolean) result;
+        }
+        public Boolean Burn(CallOpts opts, Address address, BigInteger amount) throws Exception {
+            Object result = call(opts, "Burn", address, amount);
+            return (Boolean) result;
+        }
+        public Boolean Mint(CallOpts opts, Address toAddress, BigInteger amount) throws Exception {
+            Object result = call(opts, "Mint", toAddress, amount);
+            return (Boolean) result;
+        }
     }
     public static final class Sender extends Contract.Sender {
         public Sender(Contract<?,?> contract, Address address) {

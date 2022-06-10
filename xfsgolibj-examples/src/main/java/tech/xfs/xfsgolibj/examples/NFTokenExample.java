@@ -286,6 +286,7 @@ public class NFTokenExample {
                 "getApproved <tokenId>                                  查询拥有藏品转移权限的地址\n" +
                 "isApprovedForAll <owner> <spender>                     查询<spender>地址是否拥有<owner>地址的所有藏品转移权限\n" +
                 "balanceOf <address>                                    查询指定地址的拥有的藏品数量\n" +
+                "tokenUri <tokenId>                                     查询指定藏品的URI信息\n" +
                 "ownerOf <tokenId>                                      查询藏品的持有人\n" +
                 "mint <address>                                         给指定的地址铸造藏品\n" +
                 "name                                                   查询当前合约名称\n" +
@@ -397,8 +398,22 @@ public class NFTokenExample {
                         Boolean approvedForAll = caller.IsApprovedForAll(null, approvedOwner, approvedSpender);
                         System.out.printf("%s%n", approvedForAll);
                         break;
+                    case"tokenUri":
+                        // 查询藏品的URI
+                        if(options.length < 1){
+                            usage();
+                            break;
+                        }
+                        BigInteger getTokenId = new BigInteger(options[0]);
+                        String gotTokenUri = caller.TokenUri(null, getTokenId);
+                        System.out.printf("%s%n", gotTokenUri);
+                        break;
                     case"getApproved":
                         // 查询藏品的授权地址
+                        if(options.length < 1){
+                            usage();
+                            break;
+                        }
                         BigInteger approvedTokenId = new BigInteger(options[0]);
                         Address approved = caller.GetApproved(null, approvedTokenId);
                         System.out.printf("%s%n", approved);
@@ -479,16 +494,21 @@ public class NFTokenExample {
                         break;
                     case "mint":
                         // 铸造藏品
-                        if(options.length < 1){
+                        if(options.length < 2){
                             usage();
                             break;
                         }
                         Address mintAddress = Address.fromString(options[0]);
+                        String tokenUri = options[1];
+                        if (tokenUri == null || tokenUri.isEmpty()){
+                            usage();
+                            break;
+                        }
                         // 这里要用合约创建地址执行，不然没有权限
                         TransactionOpts mintOpts = new TransactionOpts();
                         mintOpts.setFrom(creator.getAddress());
                         mintOpts.setSigner(accountMgr);
-                        Hash mintTransactionHash = sender.Mint(mintOpts, mintAddress);
+                        Hash mintTransactionHash = sender.Mint(mintOpts, mintAddress, tokenUri);
                         System.out.printf("正在给地址 (%s) 铸造藏品, 等待交易确认: %s%n",
                                 mintAddress, mintTransactionHash);
                         // 订阅交易确认消息

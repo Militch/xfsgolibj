@@ -1,5 +1,6 @@
 package tech.xfs.xfsgolibj.examples;
 
+import org.checkerframework.checker.units.qual.C;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.xfs.xfsgolibj.common.*;
@@ -25,9 +26,9 @@ public class StdTokenExample {
 
     static final class USDTCoin extends StdTokenContract {
         // 代币名称
-        private static final String NAME = "USDTest";
+        private static final String NAME = "USD_XFS";
         // 代币符号
-        private static final String SYMBOL = "USDT";
+        private static final String SYMBOL = "USDX";
         // 代币小数精度
         public static final int DECIMALS = 18;
         // 初始发行量
@@ -346,17 +347,21 @@ public class StdTokenExample {
                     (StdTokenContract.StdTokenTransferEvent) event;
             // 这是转移事件的发送地址
             Address fromAddress = stdTokenTransferEvent.getFrom(data);
+            if (fromAddress != null){
+                // 更新发送地址的余额
+                BigInteger fromAddressBalance = caller.BalanceOf(null, fromAddress);
+                accountMgr.updateAccountBalance(fromAddress, fromAddressBalance);
+            }
             // 这是转移事件的目标地址
             Address toAddress = stdTokenTransferEvent.getTo(data);
+            if (toAddress != null){
+                BigInteger toAddressBalance = caller.BalanceOf(null, toAddress);
+                // 更新目标地址的余额
+                accountMgr.updateAccountBalance(toAddress, toAddressBalance);
+            }
             // 获取转移事件的数量
             BigInteger value = stdTokenTransferEvent.getValue(data);
             logger.debug("接受转移事件，发送地址：{}，目标地址：{}, 转移数量：{}", fromAddress, toAddress, value);
-            BigInteger fromAddressBalance = caller.BalanceOf(null, fromAddress);
-            BigInteger toAddressBalance = caller.BalanceOf(null, toAddress);
-            // 更新发送地址的余额
-            accountMgr.updateAccountBalance(fromAddress, fromAddressBalance);
-            // 更新目标地址的余额
-            accountMgr.updateAccountBalance(toAddress, toAddressBalance);
         });
         System.out.printf("正在部署合约：%s, 合约创建者：%s%n", contractAddress, creator.getAddress());
         System.out.printf("交易哈希：%s, 当前交易确认次数: %d%n", transactionHash, Common.DEFAULT_CONFIRM_COUNT);
@@ -391,6 +396,22 @@ public class StdTokenExample {
                     case "h":
                     case "help":
                         usage();
+                        break;
+                    case "callMint":
+                        if(options.length < 3){
+                            usage();
+                            break;
+                        }
+                        Address callMintFromAddress = Address.fromString(options[0]);
+                        Address callMintToAddress = Address.fromString(options[1]);
+                        BigDecimal callMintValue = new BigDecimal(options[2]);
+                        BigInteger realCallMintValue = callMintValue.multiply(
+                                        BigDecimal.TEN.pow(USDTCoin.DECIMALS))
+                                .toBigInteger();
+                        Contract.CallOpts callOpts = new Contract.CallOpts();
+                        callOpts.setFrom(callMintFromAddress);
+                        Boolean callMintResult = caller.Mint(callOpts, callMintToAddress, realCallMintValue);
+                        System.out.printf("%s%n", callMintResult);
                         break;
                     case"allowance":
                         // 查询授权额度

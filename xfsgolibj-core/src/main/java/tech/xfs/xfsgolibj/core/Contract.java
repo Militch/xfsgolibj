@@ -31,6 +31,31 @@ public abstract class Contract<T extends Contract.Caller, D extends Contract.Sen
     public static final class CallOpts {
         private Address from;
         private Long blockNumber;
+        private Hash stateRoot;
+
+        public Address getFrom() {
+            return from;
+        }
+
+        public void setFrom(Address from) {
+            this.from = from;
+        }
+
+        public Long getBlockNumber() {
+            return blockNumber;
+        }
+
+        public void setBlockNumber(Long blockNumber) {
+            this.blockNumber = blockNumber;
+        }
+
+        public Hash getStateRoot() {
+            return stateRoot;
+        }
+
+        public void setStateRoot(Hash stateRoot) {
+            this.stateRoot = stateRoot;
+        }
     }
     public static class Caller{
         final Contract<?,?> contract;
@@ -226,6 +251,7 @@ public abstract class Contract<T extends Contract.Caller, D extends Contract.Sen
         byte[] paramsBuf = abiExport.pack(method, params);
         byte[] data = Bytes.concat(bin, paramsBuf);
         CallRequest request = new CallRequest();
+        request.setStateRoot(opts.stateRoot);
         request.setFrom(opts.from);
         request.setTo(contractAddress);
         request.setData(data);
